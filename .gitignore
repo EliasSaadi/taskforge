@@ -1,0 +1,26 @@
+# --- Laravel (backend)
+/backend/vendor/
+/backend/node_modules/
+backend/storage/*.key
+/backend/.env
+/backend/storage/logs/
+backend/storage/framework/cache/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+backend/storage/app/public/
+/backend/public/storage
+
+# --- React (frontend)
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env
+
+# --- IDE & système
+.DS_Store
+Thumbs.db
+*.log
+
+# --- OS & éditeurs
+.vscode/
+.idea/
+*.swp
