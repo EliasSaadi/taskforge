@@ -1,0 +1,68 @@
+name: TaskForge CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: taskforge
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      # 🔧 Récupère ton code source
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # ⚙️ Installe PHP, Composer et les extensions nécessaires
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, bcmath, pdo, mysql
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: |
+          cd backend
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      # ⚙️ Copie .env.example en .env + génère la clé
+      - name: Setup Laravel environment
+        run: |
+          cd backend
+          cp .env.example .env
+          php artisan key:generate
+
+      # 🧪 Lance les migrations et les tests
+      - name: Run tests (PHPUnit)
+        run: |
+          cd backend
+          php artisan migrate
+          php artisan test
+
+      # 🛠️ Node.js pour build le frontend
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install & Build React
+        run: |
+          cd frontend
+          npm ci
+          npm run build
