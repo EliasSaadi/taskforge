@@ -42,12 +42,18 @@ jobs:
           composer install --no-interaction --prefer-dist --optimize-autoloader
 
       # ⚙️ Copie .env.example en .env + génère la clé
-      - name: Run tests (PHPUnit)
+      - name: Setup Laravel environment
         run: |
           cd backend
-          php artisan migrate
-          php artisan test
+          cp .env.example .env
+          php artisan key:generate
+          php artisan config:clear
+          php artisan config:cache
         env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: taskforge
+          DB_USERNAME: root
           DB_PASSWORD: root
 
       # 🧪 Lance les migrations et les tests
@@ -56,6 +62,8 @@ jobs:
           cd backend
           php artisan migrate
           php artisan test
+        env:
+          DB_PASSWORD: root
 
       # 🛠️ Node.js pour build le frontend
       - name: Setup Node
