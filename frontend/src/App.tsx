@@ -1,26 +1,29 @@
-import { CheckCircle } from "lucide-react"
-import { Button } from "@/components/ui/button";
-import { login } from "./services/auth";
+// src/App.tsx
+import { RouterProvider, createBrowserRouter, BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AppGuard } from './components/appGuard'
+import { VerrouPage } from './pages/PageVerouillage'
+// Importe aussi tes autres pages ici
 
-import './App.css'
+const router = createBrowserRouter([
+  {
+    path: '/verrou',
+    element: <VerrouPage />
+  },
+  {
+    path: '/',
+    element: (
+      <AppGuard>
+        <div className="p-4">
+          <h1>Bienvenue dans TaskForge 🚀</h1>
+          {/* Remplace ça par ta vraie page d’accueil plus tard */}
+        </div>
+      </AppGuard>
+    )
+  }
+])
 
 function App() {
-  return (
-    <>
-      <div className="flex flex-col items-center justify-center gap-4">
-        <CheckCircle className="text-green-500 w-12 h-12" />
-        <h1 className="text-4xl font-bold text-fuchsia-600">TaskForge + Tailwind</h1>
-      </div> 
-      <br />
-      <Button className="bg-fuchsia-600 text-white hover:bg-fuchsia-700">
-        Je suis un bouton ShadCN
-      </Button>
-      <br />
-      <button onClick={() => login("test@example.com", "password")}>
-        Tester connexion
-      </button>
-    </>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App
