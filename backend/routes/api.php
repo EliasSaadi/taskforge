@@ -23,14 +23,12 @@ Route::get('/_debug/logs', function () {
     $logPath = storage_path('logs/laravel.log');
 
     if (!File::exists($logPath)) {
-        return response()->json(['error' => 'Aucun fichier de log trouvé'], 404);
+        return response()->json(['error' => 'Log file not found'], 404);
     }
 
     $logs = File::get($logPath);
-
-    // Pour limiter la taille : on ne retourne que les 100 dernières lignes
     $lines = explode("\n", $logs);
     $lastLines = array_slice($lines, -100);
 
-    return response("<pre>" . implode("\n", $lastLines) . "</pre>");
+    return response("<pre>" . implode("\n", $lastLines) . "</pre>")->header('Content-Type', 'text/html');
 });
