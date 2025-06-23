@@ -1,4 +1,4 @@
-# 🧱 TaskForge
+# TaskForge
 
 **TaskForge** est un gestionnaire de tâches collaboratif développé dans le cadre du titre professionnel **Concepteur Développeur d’Applications (CDA)**.  
 Il repose sur une architecture **full-stack** :  
