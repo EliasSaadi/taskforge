@@ -47,6 +47,12 @@ jobs:
           cd backend
           cp .env.example .env
           php artisan key:generate
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: taskforge
+          DB_USERNAME: root
+          DB_PASSWORD: root
 
       # 🧪 Lance les migrations et les tests
       - name: Run tests (PHPUnit)
