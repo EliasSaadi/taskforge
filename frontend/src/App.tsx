@@ -1,5 +1,5 @@
 // src/App.tsx
-import { RouterProvider, createBrowserRouter, BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter, /*BrowserRouter as Router, Routes, Route*/ } from 'react-router-dom'
 import { AppGuard } from './components/appGuard'
 import { VerrouPage } from './pages/PageVerouillage'
 // Importe aussi tes autres pages ici
