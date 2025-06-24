@@ -14,25 +14,20 @@ class AppLockedMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {   
-        $appLocked = env('APP_LOCKED', false);
-        $expectedToken = env('ACCESS_TOKEN');
-        $frontendUrl = env('FRONTEND_URL', 'https://taskforge-front.up.railway.app');
+    {
+        $appLocked = config('app.lock_enabled', false);
+        $expectedToken = config('app.access_token');
+        $frontendUrl = config('app.frontend_url', 'https://taskforge-front.up.railway.app');
 
-        // Si verrou activé
-        if ($appLocked === true || $appLocked === "true") {
-            $token = $request->header('X-Access-Token');
-
-            if ($token !== $expectedToken) {
-                // Si c'est un appel API, on renvoie 403 ou redirection
-                if ($request->expectsJson()) {
-                    return response()->json(['error' => 'API temporairement verrouillée.'], 403);
-                }
-
-                // Sinon, on redirige vers le front
-                return redirect($frontendUrl);
+        if ($appLocked && $request->header('X-Access-Token') !== $expectedToken) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'API temporairement verrouillée.'], 403);
             }
+
+            return redirect($frontendUrl);
         }
+
         return $next($request);
     }
+
 }

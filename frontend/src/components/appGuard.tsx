@@ -9,7 +9,7 @@ type Props = {
 export const AppGuard = ({ children }: Props) => {
   const navigate = useNavigate()
   const lockEnabled = import.meta.env.VITE_APP_LOCKED === "true"
-  const unlockCode = import.meta.env.VITE_APP_UNLOCK_CODE
+  const unlockCode = import.meta.env.VITE_APP_ACCESS_TOKEN
   const access = localStorage.getItem("taskforge:access")
 
   useEffect(() => {

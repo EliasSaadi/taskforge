@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Alias for environment variables
+    |--------------------------------------------------------------------------
+    |
+    | This configuration allows you to define aliases for environment variables
+    | to simplify access to them throughout your application.
+    | You can add more aliases as needed.
+    |
+    */
+
+    'lock_enabled' => env('APP_LOCKED', true),
+    'access_token' => env('ACCESS_TOKEN'),
 ];
