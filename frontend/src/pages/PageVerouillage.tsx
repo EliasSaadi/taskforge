@@ -7,7 +7,7 @@ export const VerrouPage = () => {
   const [error, setError] = useState("")
   const navigate = useNavigate()
 
-  const correctCode = import.meta.env.VITE_APP_UNLOCK_CODE
+  const correctCode = import.meta.env.VITE_APP_ACCESS_TOKEN
   const isActive = import.meta.env.VITE_APP_LOCKED === "true"
 
   const handleSubmit = (e: React.FormEvent) => {
