@@ -1,0 +1,50 @@
+services:
+  backend:
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/var/www
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env.docker
+    depends_on:
+      - db
+
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./frontend/.env.docker
+    command: sh -c "npm install --save-dev @rollup/rollup-linux-x64-gnu && npm run dev -- --host 0.0.0.0"
+
+  db:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: taskforge
+    volumes:
+      - mysql_data:/var/lib/mysql
+      
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+
+volumes:
+  mysql_data:
