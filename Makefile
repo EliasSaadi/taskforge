@@ -17,7 +17,7 @@ stop:
 
 # Rebuilder + relancer (utile après modif Dockerfile ou .env)
 restart:
-	docker-compose down && docker-compose up --build
+	docker-compose down && docker-compose up -d --build
 
 # Migrer la base de données
 migrate:

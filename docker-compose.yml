@@ -1,6 +1,5 @@
 services:
   backend:
-    restart: always
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -14,7 +13,6 @@ services:
       - db
 
   frontend:
-    restart: always
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -28,7 +26,6 @@ services:
 
   db:
     image: mysql:8.0
-    restart: always
     ports:
       - "3307:3306"
     environment:
@@ -39,7 +36,6 @@ services:
       
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    restart: always
     ports:
       - "8080:80"
     environment:
