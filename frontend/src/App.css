@@ -1,42 +1,37 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding-inline: 32px;
+  background-color: #E1DEDE;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Typography */
+.tf-text-h1 {
+  @apply text-h1 font-extrabold font-montserrat;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.tf-text-h2 {
+  @apply text-h2 font-bold font-montserrat;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.tf-text-h3 {
+  @apply text-h3 font-semibold font-montserrat;
 }
 
-.card {
-  padding: 2em;
+.tf-text-h4 {
+  @apply text-h4 font-medium font-montserrat;
 }
 
-.read-the-docs {
-  color: #888;
+.tf-text-base {
+  @apply text-base font-normal font-roboto;
+}
+
+.tf-text-secondaire {
+  @apply text-secondaire font-normal font-roboto;
+}
+
+.tf-text-label {
+  @apply text-label font-medium font-roboto;
+}
+
+.tf-text-button {
+  @apply text-button font-bold font-montserrat;
 }

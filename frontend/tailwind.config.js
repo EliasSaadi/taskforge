@@ -52,8 +52,34 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
-  		}
+  			},
+			// 🎨 Couleurs personnalisées TaskForge
+			'tf-platinum': '#E1DEDE',
+			'tf-fuschia': '#F339F4',
+			'tf-saffron': '#F3C939',
+			'tf-dodger': '#3997F4',
+			'tf-davys': '#4E494E',
+			'tf-steelpink': '#DA2DDA',
+			'tf-folly': '#F3395A',
+			'tf-battleship': '#979B97',
+			'tf-night': '#121012',
+			'tf-erin': '#39F439',
+			'tf-lime': '#2DCF2D',
+  		},
+		fontFamily: {
+			montserrat: ['Montserrat', 'sans-serif'],
+			roboto: ['Roboto', 'sans-serif'],
+		},
+		fontSize: {
+			'h1': ['64px', { letterSpacing: '-0.5%' }],
+			'h2': ['40px', { letterSpacing: '-0.5%' }],
+			'h3': ['28px', { letterSpacing: '-0.5%' }],
+			'h4': ['22px', { letterSpacing: '-0.5%' }],
+			'base': ['16px', { lineHeight: '1.4' }],
+			'secondaire': ['14px', { lineHeight: '1.4' }],
+			'label': ['12px', { lineHeight: '1.4' }],
+			'button': ['16px', { letterSpacing: '-0.5%' }],
+		},
   	}
   },
   plugins: [require("tailwindcss-animate")],
