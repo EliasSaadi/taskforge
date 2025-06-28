@@ -1,0 +1,15 @@
+vendor
+.env
+.env.*
+storage/logs
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/cache/*
+bootstrap/cache/*
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.log
+*.md
+.vscode
