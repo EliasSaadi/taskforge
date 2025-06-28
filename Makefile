@@ -35,17 +35,13 @@ seed:
 tinker:
 	docker-compose exec backend php artisan tinker
 
-# Exécuter une commande artisan libre
-artisan:
-	docker-compose exec backend php artisan $(cmd)
-
-# Exécuter une commande npm côté front
-npm:
-	docker-compose exec frontend npm run $(script)
-
 # Lancer le terminal dans le conteneur Laravel
-bash:
+back:
 	docker-compose exec backend bash
+
+# Lancer le terminal dans le conteneur React
+front:
+	docker-compose exec frontend bash
 
 # Afficher les logs en temps réel
 logs:
