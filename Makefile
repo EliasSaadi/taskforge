@@ -4,7 +4,7 @@
 up:
 	docker-compose up -d --build
 
-# Stopper tous les services
+# Stopper tous les services et supprimer les conteneurs
 down:
 	docker-compose down
 
