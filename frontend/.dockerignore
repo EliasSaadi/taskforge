@@ -5,7 +5,6 @@ dist
 Dockerfile
 .dockerignore
 .env
-.env.*
 *.log
 .vscode
 *.md

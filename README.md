@@ -56,7 +56,6 @@ cd taskforge
 cd backend
 cp .env.example .env
 php artisan key:generate
-cp .env .env.docker
 composer install
 php artisan migrate
 ```
@@ -66,7 +65,6 @@ php artisan migrate
 ```bash
 cd ../frontend
 cp .env.example .env
-cp .env.example .env.docker
 npm install
 ```
 
