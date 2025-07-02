@@ -15,6 +15,9 @@ class AppLockedMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (app()->environment('testing')) {
+            return $next($request);
+        }
         $appLocked = config('app.lock_enabled', false);
         $expectedToken = config('app.access_token');
         $frontendUrl = config('app.frontend_url', 'https://taskforge-front.up.railway.app');

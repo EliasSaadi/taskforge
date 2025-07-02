@@ -6,6 +6,7 @@ use App\Http\Controllers\API\ProjectController;
 use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\MessageController;
+use App\Http\Controllers\PasswordResetController;
 
 /* Middleware Test */
 Route::get('/middleware-test', function () {
@@ -21,6 +22,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/user', fn () => auth()->user());
 Route::post('/logout', [AuthController::class, 'logout']);
+
+Route::post('/password/forgot', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
 
 /* Route Authentification */
 
