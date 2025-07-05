@@ -20,7 +20,7 @@ class AppLockedMiddleware
         }
         $appLocked = config('app.lock_enabled', false);
         $expectedToken = config('app.access_token');
-        $frontendUrl = config('app.frontend_url', 'https://taskforge-front.up.railway.app');
+        $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
 
         if ($appLocked && $request->header('X-Access-Token') !== $expectedToken) {
             if ($request->expectsJson()) {
