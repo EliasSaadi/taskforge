@@ -15,7 +15,8 @@ class PasswordResetController extends Controller
 {
     public function __construct()
     {
-        // Cette ligne empêche auth:sanctum de s'appliquer
+        // Exclure toutes les méthodes du middleware auth:sanctum car elles sont publiques
+        $this->middleware('auth:sanctum')->except(['sendResetLink', 'resetPassword']);
     }
     // POST /password/forgot
     public function sendResetLink(Request $request)

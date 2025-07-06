@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
 
-import AuthModals from '@/components/modals/Authentification';
+import {LoginModal, RegisterModal} from '@/components/modals/Authentification';
 
 const LayoutPublic = () => {
   return (
@@ -15,7 +15,8 @@ const LayoutPublic = () => {
       </main>
 
       <Footer />
-      <AuthModals />
+      <LoginModal />
+      <RegisterModal />
     </div>
   )
 }

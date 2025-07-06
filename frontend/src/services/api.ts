@@ -8,4 +8,17 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Gestion globale des erreurs (ex : rediriger si 401)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+    }
+    if (error.response?.status === 403) {
+      console.warn("Accès interdit.");
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

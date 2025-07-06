@@ -1,16 +1,54 @@
 import { Link } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
+import { useState } from 'react';
+import { LogOut, Plus, PanelLeftClose, PanelRightClose } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext'; 
 
 // Header.jsx
 const Header = () => {
-  // TODO: Remplacer par votre système d'authentification réel
-  const isAuthenticated = false; // ou useAuth(), useContext(), etc.
+  const isAuthenticated = useAuth().isAuthenticated;
+  
+  const [showPanel, setShowPanel] = useState(false);
+  const togglePanel = () => setShowPanel(!showPanel);
 
   return (
     <header className="flex items-center justify-between h-20 py-4">
-      <Link to="/" className="tf-text-h3 hover:scale-105 duration-300 transition-transform" aria-label="Page d'accueil">
-        TaskForge
-      </Link>
+      <div className="flex items-center gap-2">
+        {isAuthenticated ? (
+          <>
+            <div 
+              onClick={togglePanel}
+              className="flex justify-center items-center rounded-lg cursor-pointer text-tf-night"
+            >
+              {showPanel ? <PanelRightClose size={32} /> : <PanelLeftClose size={32} />}
+            </div>
+          </>
+        ) : ( <> </> )}
+        <Link to={isAuthenticated ? "/dashboard" : "/"} className="tf-text-h3 hover:scale-105 duration-300 transition-transform" aria-label="Page d'accueil">
+          TaskForge
+        </Link>
+      </div>
+      {isAuthenticated ? (
+        // Si l'utilisateur est connecté, afficher la barre de recherche
+        <>
+          <div className="flex justify-center items-center gap-4 max-w-3xl w-full h-full">
+            <input
+              id="searchProjects"
+              name="search"
+              type="text"
+              placeholder="Rechercher..."
+              className="w-full px-5 border rounded-lg bg-tf-platinum tf-text-button placeholder:text-tf-davys h-full
+                          focus:outline-none focus:ring-2 focus:ring-tf-dodger focus:border-tf-dodger"
+              aria-label="Barre de recherche"
+            />
+            <button 
+              className="bg-tf-dodger px-5 py-3 tf-text-button rounded-lg flex items-center gap-1"
+              aria-label="Créer un nouveau projet"
+            >
+              <Plus/> Créer
+            </button>
+          </div>
+        </>
+      ) : ( <> </> )}
       <nav className="flex items-center gap-4 h-full" role="navigation" aria-label="Navigation principale">
         {isAuthenticated ? (
           // Navigation pour utilisateur connecté

@@ -1,25 +1,24 @@
-# Étape 1 : Composer
-FROM composer:2.7 AS vendor
-
-WORKDIR /app
-COPY . .
-RUN composer install
-
-# Étape 2 : Laravel PHP
 FROM php:8.2-fpm
 
-WORKDIR /var/www
-
+# Installer les extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
-    git unzip curl libpng-dev libonig-dev libxml2-dev zip libzip-dev \
+    unzip git zip curl libpng-dev libonig-dev libxml2-dev libzip-dev \
     default-mysql-client \
     && docker-php-ext-install pdo pdo_mysql zip bcmath
 
+# Copier Composer depuis l’image officielle
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+# Copier tout le code du backend
 COPY . .
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Créer les dossiers nécessaires pour Laravel
+RUN mkdir -p bootstrap/cache && chmod -R 775 bootstrap/cache
 
-RUN composer install
+# Installer les dépendances Laravel
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 EXPOSE 8000
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

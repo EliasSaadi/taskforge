@@ -1,8 +1,14 @@
 // src/App.tsx
-import { RouterProvider, createBrowserRouter, /*BrowserRouter as Router, Routes, Route*/ } from 'react-router-dom'
-import { AppGuard } from './components/appGuard'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { AppGuard } from './components/AppGuard'
 import { VerrouPage } from './pages/PageVerouillage'
+import { AuthProvider } from './contexts/AuthContext';
+
 // Importe aussi tes autres pages ici
+import LayoutPublic from "@/components/layouts/LayouPublic";
+import Home from "@/pages/Home";
+import Dashboard from "@/pages/Dashboard";
+
 
 const router = createBrowserRouter([
   {
@@ -13,17 +19,32 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <AppGuard>
-        <div className="p-4">
-          <h1>Bienvenue dans TaskForge 🚀</h1>
-          {/* Remplace ça par ta vraie page d’accueil plus tard */}
-        </div>
+        <LayoutPublic />
       </AppGuard>
-    )
+    ),
+    children: [
+      { index: true, element: <Home /> }
+    ],
+  },
+  {
+    path: '/dashboard',
+    element: (
+      <AppGuard>
+        <LayoutPublic />
+      </AppGuard>
+    ),
+    children: [
+      { index: true, element: <Dashboard /> }
+    ],
   }
 ])
 
 function App() {
-  return <RouterProvider router={router} />
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  )
 }
 
 export default App

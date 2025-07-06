@@ -27,7 +27,7 @@ export const VerrouPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-tf-platinum flex flex-col items-center justify-center">
       <h1 className="text-2xl font-bold mb-4">🔒 Accès protégé</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
@@ -39,11 +39,11 @@ export const VerrouPage = () => {
         />
         <button
           type="submit"
-          className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700"
+          className="bg-tf-fuschia text-white py-2 px-4 rounded hover:bg-tf-steelpink transition-colors duration-300"
         >
           Déverrouiller
         </button>
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-tf-folly">{error}</p>}
       </form>
     </div>
   )

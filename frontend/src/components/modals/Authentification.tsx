@@ -1,17 +1,32 @@
 import { X, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // src/components/modals/AuthModals.tsx
-const AuthModals = () => {
-  // États pour gérer la visibilité des mots de passe
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const LoginModal = () => {
 
-  // Fonctions pour basculer la visibilité
+  const navigate = useNavigate();
+
+  const { login, error, loading } = useAuth();
+  const [email, setEmail] = useState("user1@test.com");
+  const [password, setPassword] = useState("password1");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      await login(email, password);
+      navigate("/dashboard");
+    } catch {
+      // L'erreur est déjà stockée dans le contexte
+    }
+  }
+
+  // États pour gérer la visibilité du mots de passe
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+
+  // Fonctions pour basculer la visibilité du mots de passe
   const toggleLoginPassword = () => setShowLoginPassword(!showLoginPassword);
-  const toggleRegisterPassword = () => setShowRegisterPassword(!showRegisterPassword);
-  const toggleConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
   return (
     <>
@@ -35,12 +50,19 @@ const AuthModals = () => {
               </button>
             </div>
             <div className="tf-text-base">
-              <form className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex flex-col items-left">
                   <div className="flex flex-col gap-4">
                     <div className="">
                       <label htmlFor="email" className="tf-text-label">Email*</label>
-                      <input type="email" name="email" placeholder="exemple@exemple.com" className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" required/>
+                      <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="exemple@exemple.com" 
+                        className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required/>
                     </div>
 
                     <div className="">
@@ -51,6 +73,8 @@ const AuthModals = () => {
                           name="mdp" 
                           placeholder="Mot de passe" 
                           className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" 
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           required
                         />
                         <div 
@@ -60,6 +84,7 @@ const AuthModals = () => {
                           {showLoginPassword ? <EyeOff /> : <Eye />}
                         </div>
                       </div>
+                      {error && <p className="text-tf-folly py-2  ">{error}</p>}
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
@@ -75,7 +100,7 @@ const AuthModals = () => {
                     className="bg-tf-erin px-5 py-3 tf-text-button rounded-lg hover:bg-tf-lime
                                 hover:scale-105 duration-300 transition-transform"
                   >
-                    Se Connecter
+                    {loading ? "Connexion..." : "Se connecter"}
                   </button>
                   <div className="flex gap-1 items-center justify-center">
                     <span> Vous n'avez pas de compte ? </span>
@@ -91,8 +116,26 @@ const AuthModals = () => {
           </div>
         </div>
       </div>
+    </>
+  );
+};
 
-      {/* Modal Inscription */}
+
+const RegisterModal = () => {
+  const navigate = useNavigate();
+
+  // États pour gérer la visibilité des mots de passe
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Fonctions pour basculer la visibilité des mots de passe
+  const toggleRegisterPassword = () => setShowRegisterPassword(!showRegisterPassword);
+  const toggleConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
+
+
+  return (
+    <>
+    {/* Modal Inscription */}
       <div
         id="registerModal"
         tabIndex={-1}
@@ -175,22 +218,22 @@ const AuthModals = () => {
                   >
                     S'inscrire
                   </button>
-                  <div className="flex gap-1 items-center justify-center">
-                    <span> Vous possédez un compte ? </span>
-                    <a href="#" 
-                      data-modal-hide="registerModal"
-                      data-modal-target="loginModal" 
-                      data-modal-toggle="loginModal" 
-                      className="hover:underline"> Se connecter </a>
-                  </div>
                 </div>
               </form>
+              <div className="flex gap-1 items-center justify-center">
+                <span> Vous possédez un compte ? </span>
+                <a href="#" 
+                  data-modal-hide="registerModal"
+                  data-modal-target="loginModal" 
+                  data-modal-toggle="loginModal" 
+                  className="hover:underline"> Se connecter </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </>
   );
-};
+}
 
-export default AuthModals;
+export { LoginModal, RegisterModal };

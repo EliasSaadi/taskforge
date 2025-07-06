@@ -7,37 +7,26 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\PasswordResetController;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
-/* Middleware Test */
-Route::get('/middleware-test', function () {
-    return response()->json(['ok' => true]);
-});
-/* Middleware Test */
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 
-
-/* Route Authentification */
-
+/* Routes d'authentification */
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/user', fn () => auth()->user());
+Route::get('/user', [AuthController::class, 'user']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
+/* Routes de réinitialisation de mot de passe */
 Route::post('/password/forgot', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
 
-/* Route Authentification */
-
-
-
-/* Route API */
-
+/* Routes API Resources */
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('tasks', TaskController::class);
-Route::apiResource('users', UserController::class);
+Route::apiResource('user', UserController::class);
 Route::apiResource('messages', MessageController::class);
-
-/* Route API */
 
 
 
@@ -59,12 +48,13 @@ Route::controller(TaskController::class)->group(function () {
 
 // Routes custom pour les utilisateurs
 Route::controller(UserController::class)->group(function () {
-    Route::get('/users/{id}/projects', 'projects'); // Récupérer les projets d’un utilisateur
-    Route::get('/users/{id}/tasks', 'tasks'); // Récupérer les tâches assignées à un utilisateur
-    Route::get('/users/{id}/role-in-project/{projectId}', 'roleInProject'); // Récupérer le rôle de l’utilisateur dans un projet donné
+    Route::get('/user/{id}/projects', 'projects'); // Récupérer les projets d’un utilisateur
+    Route::get('/user/{id}/tasks', 'tasks'); // Récupérer les tâches assignées à un utilisateur
+    Route::get('/user/{id}/role-in-project/{projectId}', 'roleInProject'); // Récupérer le rôle de l’utilisateur dans un projet donné
+    
+    Route::patch('/user/{id}/deactivate', 'deactivate'); // Mettre à jour le thème de l'utilisateur
+    Route::patch('/user/{id}/theme', 'toggleTheme'); // Mettre à jour le thème de l'utilisateur
 });
 
 // Routes custom pour les messages
 Route::get('/projects/{id}/messages', [ProjectController::class, 'messages']);
-
-/* Routes personnalisées */

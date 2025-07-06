@@ -12,7 +12,8 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        // ❌ Pas de middleware ici : les routes doivent rester publiques
+        // Exclure les méthodes publiques du middleware auth:sanctum
+        $this->middleware('auth:sanctum')->except(['login', 'register']);
     }
 
     // ✅ Enregistrement

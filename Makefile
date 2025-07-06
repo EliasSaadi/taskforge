@@ -8,6 +8,10 @@ up:
 down:
 	docker-compose down
 
+# Rebuilder + relancer (utile après modif Dockerfile ou .env)
+rebuild:
+	docker-compose down && docker-compose up -d --build
+
 # Lance tous les services
 start:
 	docker-compose start
@@ -15,9 +19,8 @@ start:
 stop:
 	docker-compose stop
 
-# Rebuilder + relancer (utile après modif Dockerfile ou .env)
 restart:
-	docker-compose down && docker-compose up -d --build
+	docker-compose restart
 
 # Migrer la base de données
 migrate:

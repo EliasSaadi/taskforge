@@ -5,33 +5,33 @@
 
 /* Typography */
 .tf-text-h1 {
-  @apply text-h1 font-extrabold font-montserrat;
+  @apply text-h1 font-extrabold font-montserrat text-tf-night;
 }
 
 .tf-text-h2 {
-  @apply text-h2 font-bold font-montserrat;
+  @apply text-h2 font-bold font-montserrat text-tf-night;
 }
 
 .tf-text-h3 {
-  @apply text-h3 font-semibold font-montserrat;
+  @apply text-h3 font-semibold font-montserrat text-tf-night;
 }
 
 .tf-text-h4 {
-  @apply text-h4 font-medium font-montserrat;
+  @apply text-h4 font-medium font-montserrat text-tf-night;
 }
 
 .tf-text-base {
-  @apply text-base font-normal font-roboto;
+  @apply text-base font-normal font-roboto text-tf-night;
 }
 
 .tf-text-secondaire {
-  @apply text-secondaire font-normal font-roboto;
+  @apply text-secondaire font-normal font-roboto text-tf-night;
 }
 
 .tf-text-label {
-  @apply text-label font-medium font-roboto;
+  @apply text-label font-medium font-roboto text-tf-davys;
 }
 
 .tf-text-button {
-  @apply text-button font-bold font-montserrat;
+  @apply text-button font-bold font-montserrat text-tf-night;
 }
