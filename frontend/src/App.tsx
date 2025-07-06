@@ -1,6 +1,8 @@
 // src/App.tsx
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { AppGuard } from './components/AppGuard'
+import { PrivateRoute } from './components/PrivateRoute'
+import { PublicRoute } from './components/PublicRoute'
 import { VerrouPage } from './pages/PageVerouillage'
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -8,6 +10,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import LayoutPublic from "@/components/layouts/LayouPublic";
 import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
+import MonProfil from "@/pages/MonProfil";
+import LoadersDemo from "@/pages/LoadersDemo";
 
 
 const router = createBrowserRouter([
@@ -19,7 +23,9 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <AppGuard>
-        <LayoutPublic />
+        <PublicRoute>
+          <LayoutPublic />
+        </PublicRoute>
       </AppGuard>
     ),
     children: [
@@ -30,12 +36,31 @@ const router = createBrowserRouter([
     path: '/dashboard',
     element: (
       <AppGuard>
-        <LayoutPublic />
+        <PrivateRoute>
+          <LayoutPublic />
+        </PrivateRoute>
       </AppGuard>
     ),
     children: [
       { index: true, element: <Dashboard /> }
     ],
+  },
+  {
+    path: '/mon-profil',
+    element: (
+      <AppGuard>
+        <PrivateRoute>
+          <LayoutPublic />
+        </PrivateRoute>
+      </AppGuard>
+    ),
+    children: [
+      { index: true, element: <MonProfil /> }
+    ],
+  },
+  {
+    path: '/demo',
+    element: <LoadersDemo />
   }
 ])
 

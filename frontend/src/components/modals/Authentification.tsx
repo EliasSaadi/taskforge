@@ -1,21 +1,82 @@
 import { X, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { LoaderDots } from "../ui";
+
+// Gestionnaire global des modales
+const useModalManager = () => {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleShowLoginModal = () => setIsLoginModalOpen(true);
+    const handleHideLoginModal = () => setIsLoginModalOpen(false);
+    const handleShowRegisterModal = () => setIsRegisterModalOpen(true);
+    const handleHideRegisterModal = () => setIsRegisterModalOpen(false);
+
+    // Écouter les clics sur les boutons pour la modal de connexion
+    const loginTriggers = document.querySelectorAll('[data-modal-target="loginModal"]');
+    loginTriggers.forEach(trigger => {
+      trigger.addEventListener('click', handleShowLoginModal);
+    });
+
+    const loginClosers = document.querySelectorAll('[data-modal-hide="loginModal"]');
+    loginClosers.forEach(closer => {
+      closer.addEventListener('click', handleHideLoginModal);
+    });
+
+    // Écouter les clics sur les boutons pour la modal d'inscription
+    const registerTriggers = document.querySelectorAll('[data-modal-target="registerModal"]');
+    registerTriggers.forEach(trigger => {
+      trigger.addEventListener('click', handleShowRegisterModal);
+    });
+
+    const registerClosers = document.querySelectorAll('[data-modal-hide="registerModal"]');
+    registerClosers.forEach(closer => {
+      closer.addEventListener('click', handleHideRegisterModal);
+    });
+
+    return () => {
+      loginTriggers.forEach(trigger => {
+        trigger.removeEventListener('click', handleShowLoginModal);
+      });
+      loginClosers.forEach(closer => {
+        closer.removeEventListener('click', handleHideLoginModal);
+      });
+      registerTriggers.forEach(trigger => {
+        trigger.removeEventListener('click', handleShowRegisterModal);
+      });
+      registerClosers.forEach(closer => {
+        closer.removeEventListener('click', handleHideRegisterModal);
+      });
+    };
+  }, []);
+
+  return {
+    isLoginModalOpen,
+    setIsLoginModalOpen,
+    isRegisterModalOpen,
+    setIsRegisterModalOpen
+  };
+};
 
 // src/components/modals/AuthModals.tsx
-const LoginModal = () => {
-
+const LoginModal = ({ isOpen, onClose, onSwitchToRegister }: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  onSwitchToRegister: () => void; 
+}) => {
   const navigate = useNavigate();
-
   const { login, error, loading } = useAuth();
-  const [email, setEmail] = useState("user1@test.com");
-  const [password, setPassword] = useState("password1");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleConnectSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
       await login(email, password);
+      onClose();
       navigate("/dashboard");
     } catch {
       // L'erreur est déjà stockée dans le contexte
@@ -34,8 +95,8 @@ const LoginModal = () => {
       <div
         id="loginModal"
         tabIndex={-1}
-        className="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto
-                   md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black/40"
+        className={`fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto
+                   md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black/40 ${isOpen ? 'block' : 'hidden'}`}
       >
         <div className="relative w-full max-w-md max-h-full mx-auto mt-20 tf-text-base">
           <div className="relative bg-tf-platinum rounded-2xl w-[480px] min-h-[360px] p-8 shadow">
@@ -44,13 +105,13 @@ const LoginModal = () => {
               <button
                 type="button"
                 className="tf-text-base"
-                data-modal-hide="loginModal"
+                onClick={onClose}
               >
                 <X />
               </button>
             </div>
             <div className="tf-text-base">
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleConnectSubmit} className="space-y-4">
                 <div className="flex flex-col items-left">
                   <div className="flex flex-col gap-4">
                     <div className="">
@@ -98,16 +159,25 @@ const LoginModal = () => {
                 <div className="flex flex-col items-center justify-center gap-3">
                   <button
                     className="bg-tf-erin px-5 py-3 tf-text-button rounded-lg hover:bg-tf-lime
-                                hover:scale-105 duration-300 transition-transform"
+                                hover:scale-105 duration-300 transition-transform disabled:opacity-50"
+                    disabled={loading}
                   >
-                    {loading ? "Connexion..." : "Se connecter"}
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <span>Connexion </span>
+                        <LoaderDots size="sm" />
+                      </div>
+                    ) : (
+                      "Se connecter"
+                    )}
                   </button>
                   <div className="flex gap-1 items-center justify-center">
                     <span> Vous n'avez pas de compte ? </span>
                     <a href="#" 
-                      data-modal-hide="loginModal"
-                      data-modal-target="registerModal" 
-                      data-modal-toggle="registerModal"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onSwitchToRegister();
+                      }}
                       className="hover:underline"> Créer un compte </a>
                   </div>
                 </div>
@@ -121,8 +191,20 @@ const LoginModal = () => {
 };
 
 
-const RegisterModal = () => {
+const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSwitchToLogin: () => void;
+}) => {
   const navigate = useNavigate();
+  const { register, error, loading } = useAuth();
+  
+  // États pour les champs du formulaire
+  const [prenom, setPrenom] = useState("");
+  const [nom, setNom] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   // États pour gérer la visibilité des mots de passe
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
@@ -132,6 +214,17 @@ const RegisterModal = () => {
   const toggleRegisterPassword = () => setShowRegisterPassword(!showRegisterPassword);
   const toggleConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
+  async function handleRegisterSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      await register(prenom, nom, email, password, passwordConfirmation);
+      onClose();
+      navigate("/dashboard");
+    } catch {
+      // L'erreur est déjà stockée dans le contexte
+    }
+  }
+
 
   return (
     <>
@@ -139,8 +232,8 @@ const RegisterModal = () => {
       <div
         id="registerModal"
         tabIndex={-1}
-        className="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto
-                   md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black/40"
+        className={`fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto
+                   md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black/40 ${isOpen ? 'block' : 'hidden'}`}
       >
         <div className="relative w-full max-w-md max-h-full mx-auto mt-20 tf-text-base">
           <div className="relative bg-tf-platinum rounded-2xl w-[520px] min-h-[360px] p-8 shadow">
@@ -149,28 +242,52 @@ const RegisterModal = () => {
               <button
                 type="button"
                 className="tf-text-base"
-                data-modal-hide="registerModal"
+                onClick={onClose}
               >
                 <X />
               </button>
             </div>
             <div className="tf-text-base">
-              <form className="space-y-4">
+              <form onSubmit={handleRegisterSubmit} className="space-y-4">
                 <div className="flex flex-col items-left">
                   <div className="flex flex-col">
                     <div className="flex gap-4">
                       <div>
                         <label htmlFor="lastName" className="tf-text-label">Nom*</label>
-                        <input type="text" name="lastName" placeholder="Nom" className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" required />
+                        <input 
+                          type="text" 
+                          name="lastName" 
+                          placeholder="Nom" 
+                          className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" 
+                          value={nom}
+                          onChange={(e) => setNom(e.target.value)}
+                          required 
+                        />
                       </div>
                       <div>
                         <label htmlFor="firstName" className="tf-text-label">Prénom*</label>
-                        <input type="text" name="firstName" placeholder="Prénom" className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" required />
+                        <input 
+                          type="text" 
+                          name="firstName" 
+                          placeholder="Prénom" 
+                          className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" 
+                          value={prenom}
+                          onChange={(e) => setPrenom(e.target.value)}
+                          required 
+                        />
                       </div>
                     </div>
                     <div>
                       <label htmlFor="email" className="tf-text-label">Email*</label>
-                      <input type="email" name="email" placeholder="exemple@exemple.com" className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" required />
+                      <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="exemple@exemple.com" 
+                        className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required 
+                      />
                     </div>
 
                     <div>
@@ -181,6 +298,8 @@ const RegisterModal = () => {
                           name="mdp" 
                           placeholder="Mot de passe" 
                           className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" 
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           required
                         />
                         <div 
@@ -196,9 +315,11 @@ const RegisterModal = () => {
                       <div className="flex w-full gap-2">
                         <input 
                           type={showConfirmPassword ? "text" : "password"} 
-                          name="mdp" 
-                          placeholder="Mot de passe" 
+                          name="confirmMdp" 
+                          placeholder="Confirmer le mot de passe" 
                           className="w-full px-4 py-3 border-2 rounded-lg bg-tf-platinum" 
+                          value={passwordConfirmation}
+                          onChange={(e) => setPasswordConfirmation(e.target.value)}
                           required
                         />
                         <div 
@@ -209,23 +330,34 @@ const RegisterModal = () => {
                         </div>
                       </div>
                     </div>
+                    {error && <p className="text-tf-folly py-2">{error}</p>}
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center gap-3">
                   <button
+                    type="submit"
+                    disabled={loading}
                     className="bg-tf-erin px-5 py-3 tf-text-button rounded-lg hover:bg-tf-lime
-                                hover:scale-105 duration-300 transition-transform"
+                                hover:scale-105 duration-300 transition-transform disabled:opacity-50"
                   >
-                    S'inscrire
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <span>Inscription en cours </span>
+                        <LoaderDots size="sm" />
+                      </div>
+                    ) : (
+                      "S'inscrire"
+                    )}
                   </button>
                 </div>
               </form>
               <div className="flex gap-1 items-center justify-center">
                 <span> Vous possédez un compte ? </span>
                 <a href="#" 
-                  data-modal-hide="registerModal"
-                  data-modal-target="loginModal" 
-                  data-modal-toggle="loginModal" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSwitchToLogin();
+                  }}
                   className="hover:underline"> Se connecter </a>
               </div>
             </div>
@@ -236,4 +368,34 @@ const RegisterModal = () => {
   );
 }
 
-export { LoginModal, RegisterModal };
+// Composant principal qui gère les deux modales
+const AuthModals = () => {
+  const { isLoginModalOpen, setIsLoginModalOpen, isRegisterModalOpen, setIsRegisterModalOpen } = useModalManager();
+
+  const handleSwitchToRegister = () => {
+    setIsLoginModalOpen(false);
+    setTimeout(() => setIsRegisterModalOpen(true), 100);
+  };
+
+  const handleSwitchToLogin = () => {
+    setIsRegisterModalOpen(false);
+    setTimeout(() => setIsLoginModalOpen(true), 100);
+  };
+
+  return (
+    <>
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+        onSwitchToRegister={handleSwitchToRegister}
+      />
+      <RegisterModal 
+        isOpen={isRegisterModalOpen} 
+        onClose={() => setIsRegisterModalOpen(false)} 
+        onSwitchToLogin={handleSwitchToLogin}
+      />
+    </>
+  );
+};
+
+export { LoginModal, RegisterModal, AuthModals };

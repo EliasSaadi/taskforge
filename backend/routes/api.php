@@ -15,7 +15,7 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 /* Routes d'authentification */
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/user', [AuthController::class, 'user']);
+Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 /* Routes de réinitialisation de mot de passe */

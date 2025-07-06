@@ -6,6 +6,21 @@ import { useAuth } from '@/contexts/AuthContext';
 // Header.jsx
 const Header = () => {
   const isAuthenticated = useAuth().isAuthenticated;
+
+  const { logout } = useAuth();
+
+  async function handleLogout(e: React.FormEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      await logout();
+      // Rechargement complet de la page pour nettoyer l'état de Flowbite
+      window.location.href = '/';
+    } catch (err) {
+      console.error("Erreur lors de la déconnexion:", err);
+    }
+  }
   
   const [showPanel, setShowPanel] = useState(false);
   const togglePanel = () => setShowPanel(!showPanel);
@@ -53,15 +68,16 @@ const Header = () => {
         {isAuthenticated ? (
           // Navigation pour utilisateur connecté
           <>
-            <button 
-              onClick={() => alert('Déconnexion non implémentée')}
+            <Link 
+              to="/"
+              onClick={handleLogout}
               className="bg-tf-folly px-5 py-3 tf-text-button rounded-lg 
                           hover:scale-105 duration-300 transition-transform"
               aria-label="Se déconnecter"
             >
               <LogOut className="rotate-180" />
               <span className="sr-only">Se déconnecter</span>
-            </button>
+            </Link>
             <div className="h-full p-px bg-tf-davys" role="separator"></div>
             <Link 
               to="/mon-profil"

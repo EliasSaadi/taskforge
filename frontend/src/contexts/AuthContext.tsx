@@ -8,6 +8,7 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (prenom: string, nom: string, email: string, password: string, password_confirmation: string) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -22,13 +23,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isAuthenticated = !!user;
 
-  // Recharger l'utilisateur au démarrage
+  // Vérifier l'état d'authentification au démarrage
+  // en tentant de récupérer l'utilisateur connecté
   useEffect(() => {
-    api.get("/sanctum/csrf-cookie")
-      .then(() => api.get("/api/user"))
-      .then(res => setUser(res.data))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    const checkAuthStatus = async () => {
+      try {
+        // Essayer de récupérer l'utilisateur sans cookie CSRF d'abord
+        const response = await api.get("/api/user");
+        if (response.data) {
+          setUser(response.data);
+        }
+      } catch (err) {
+        // Si ça échoue, l'utilisateur n'est pas connecté (normal)
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuthStatus();
   }, []);
 
 
@@ -38,9 +51,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await api.get("/sanctum/csrf-cookie");
-      await api.post("/api/login", { email, password });
-      const res = await api.get("/api/user");
-      setUser(res.data);
+      const loginResponse = await api.post("/api/login", { email, password });
+      
+      // Utilisons directement les données utilisateur de la réponse de login
+      if (loginResponse.data && loginResponse.data.user) {
+        setUser(loginResponse.data.user);
+      } else {
+        // Fallback : essayer de récupérer via /api/user
+        const res = await api.get("/api/user");
+        setUser(res.data);
+      }
     } catch (err: any) {
       const message =
         err.response?.data?.message === "These credentials do not match our records."
@@ -53,18 +73,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const register = async (prenom: string, nom: string, email: string, password: string, password_confirmation: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await api.get("/sanctum/csrf-cookie");
+      const registerResponse = await api.post("/api/register", { 
+        prenom, 
+        nom, 
+        email, 
+        password, 
+        password_confirmation 
+      });
+      
+      // Utilisons directement les données utilisateur de la réponse d'inscription
+      if (registerResponse.data && registerResponse.data.user) {
+        setUser(registerResponse.data.user);
+      }
+    } catch (err: any) {
+      const message = err.response?.data?.message || "Erreur lors de l'inscription.";
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
       await api.post("/api/logout");
-    } catch {
-      // rien à faire si déjà déconnecté
+    } catch (err) {
+      // Ignorer les erreurs de déconnexion (utilisateur déjà déconnecté, etc.)
     } finally {
       setUser(null);
+      setError(null);
+      setLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, loading, error }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, loading, error }}>
       {children}
     </AuthContext.Provider>
   );
