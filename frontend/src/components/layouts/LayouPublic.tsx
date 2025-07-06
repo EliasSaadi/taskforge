@@ -10,7 +10,7 @@ const LayoutPublic = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-1 flex items-center justify-center w-full">
+      <main className="flex-1 flex items-center justify-center w-full px-8">
         <Outlet />
       </main>
 
