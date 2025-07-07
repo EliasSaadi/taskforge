@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import { DeleteService } from '@/services/deleteService';
+import { useNotification } from '@/contexts/NotificationContext';
 
 interface DeleteContextType {
   /** État de chargement global pour les suppressions */
@@ -40,6 +41,7 @@ export const DeleteProvider: React.FC<DeleteProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
   const [deletingType, setDeletingType] = useState<'utilisateur' | 'projet' | 'tâche' | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const { showSuccess, showError } = useNotification();
 
   /**
    * Fonction générique pour gérer les suppressions
@@ -57,10 +59,25 @@ export const DeleteProvider: React.FC<DeleteProviderProps> = ({ children }) => {
     try {
       await deleteFunction();
       console.log(`${type} ${id ? `(ID: ${id})` : ''} supprimé avec succès`);
+      
+      // Afficher une notification de succès
+      if (type === 'utilisateur' && !id) {
+        // Suppression du compte utilisateur actuel
+        showSuccess('Votre compte a bien été supprimé.');
+      } else {
+        // Autres suppressions
+        const article = type === 'utilisateur' ? 'L\'' : type === 'tâche' ? 'La ' : 'Le ';
+        showSuccess(`${article}${type} a été supprimé${type === 'tâche' ? 'e' : ''} avec succès.`);
+      }
+      
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue lors de la suppression';
       setError(errorMessage);
+      
+      // Afficher une notification d'erreur
+      showError(errorMessage);
+      
       console.error(`Erreur lors de la suppression du ${type}:`, err);
       return false;
     } finally {
