@@ -23,10 +23,12 @@ Route::post('/password/forgot', [PasswordResetController::class, 'sendResetLink'
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
 
 /* Routes API Resources */
-Route::apiResource('projects', ProjectController::class);
-Route::apiResource('tasks', TaskController::class);
-Route::apiResource('user', UserController::class);
-Route::apiResource('messages', MessageController::class);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('projects', ProjectController::class);
+    Route::apiResource('tasks', TaskController::class);
+    Route::apiResource('user', UserController::class);
+    Route::apiResource('messages', MessageController::class);
+});
 
 
 
@@ -34,6 +36,7 @@ Route::apiResource('messages', MessageController::class);
 
 // Routes custom pour les projets
 Route::controller(ProjectController::class)->group(function () {
+    Route::get('/my-projects', 'getUserProjects')->middleware('auth:sanctum'); // Récupérer les projets de l'utilisateur connecté
     Route::get('/projects/{id}/messages', 'messages'); // Récupérer les messages d'un projet
     Route::get('/projects/{id}/members', 'members'); // Récupérer les membres d'un projet
     Route::get('/projects/{id}/tasks', 'tasks'); // Récupérer les tâches d'un projet
