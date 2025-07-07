@@ -6,7 +6,7 @@ import { LoaderSpin } from '@/components/ui';
 import { useState } from 'react';
 
 const MonProfil = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoggingOut } = useAuth();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isRedirectingAfterDelete, setIsRedirectingAfterDelete] = useState(false);
   const { isDeleting, deleteCurrentAccount } = useDelete();
@@ -49,6 +49,13 @@ const MonProfil = () => {
     <>
       {/* LoaderSpin en plein écran pendant la redirection après suppression */}
       {isRedirectingAfterDelete && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
+          <LoaderSpin size="xl" />
+        </div>
+      )}
+      
+      {/* LoaderSpin en plein écran pendant la déconnexion */}
+      {isLoggingOut && (
         <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
           <LoaderSpin size="xl" />
         </div>

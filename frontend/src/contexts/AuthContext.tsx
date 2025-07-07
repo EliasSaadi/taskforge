@@ -11,6 +11,7 @@ type AuthContextType = {
   register: (prenom: string, nom: string, email: string, password: string, password_confirmation: string) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
+  isLoggingOut: boolean;
   error: string | null;
 };
 
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isAuthenticated = !!user;
@@ -101,19 +103,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
+    setIsLoggingOut(true);
     try {
       await api.post("/api/logout");
     } catch (err) {
       // Ignorer les erreurs de déconnexion (utilisateur déjà déconnecté, etc.)
+      console.log("Erreur lors de la déconnexion (ignorée):", err);
     } finally {
       setUser(null);
       setError(null);
       setLoading(false);
+      setIsLoggingOut(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, loading, error }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, loading, isLoggingOut, error }}>
       {children}
     </AuthContext.Provider>
   );

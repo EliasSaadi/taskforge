@@ -2,12 +2,11 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { LogOut, Plus, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext'; 
+import { LoaderSpin } from '@/components/ui'; 
 
 // Header.jsx
 const Header = () => {
-  const isAuthenticated = useAuth().isAuthenticated;
-
-  const { logout } = useAuth();
+  const { isAuthenticated, logout, isLoggingOut } = useAuth();
 
   async function handleLogout(e: React.FormEvent) {
     e.preventDefault();
@@ -27,6 +26,13 @@ const Header = () => {
 
   return (
     <header className="flex items-center justify-between h-20 py-4 border-b-2 border-tf-davys px-8">
+      {/* LoaderSpin en plein écran pendant la déconnexion */}
+      {isLoggingOut && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
+          <LoaderSpin size="xl" />
+        </div>
+      )}
+      
       <div className="flex items-center gap-2">
         {isAuthenticated ? (
           <>
