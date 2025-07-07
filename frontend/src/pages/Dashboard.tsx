@@ -3,7 +3,8 @@ import { Plus } from 'lucide-react';
 const Dashboard = () => {
   return (
     <div className="flex flex-col items-center justify-center text-center">
-      <h1 className="tf-text-h1 font-bold mb-4">Vous n'avez pas de projet</h1>
+      <h1 className="tf-text-h3 font-bold mb-4">Vous n’êtes dans aucun projet ou vous ne possédez pas de projet.</h1>
+      <h1 className="tf-text-h3 font-bold mb-4">Commencez par en créer un !</h1>
       <button
           data-modal-target="" // Ajoute l'ID de ton modal ici
           data-modal-toggle="" // Ajoute l'ID de ton modal ici

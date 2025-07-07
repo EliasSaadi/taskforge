@@ -27,7 +27,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Afficher le profil de l'utilisateur.
      */
     public function show(string $id)
     {
@@ -42,7 +42,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mettre à jour le profil de l'utilisateur.
      */
     public function update(Request $request, string $id)
     {
@@ -73,7 +73,7 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprimer le compte de l'utilisateur.
      */
     public function destroy(string $id)
     {
@@ -104,6 +104,24 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['message' => 'Compte désactivé.']);
+    }
+
+    /**
+     * Désactiver le compte de l'utilisateur.
+     * ✅ PATCH /api/users/{id}/deactivate
+     */
+    public function activate($id)
+    {
+        $user = User::findOrFail($id);
+
+        if (auth()->id() !== $user->id) {
+            return response()->json(['message' => 'Accès non autorisé'], 403);
+        }
+
+        $user->actif = true;
+        $user->save();
+
+        return response()->json(['message' => 'Compte activé.']);
     }
 
     /**

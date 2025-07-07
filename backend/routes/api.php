@@ -52,8 +52,9 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/user/{id}/tasks', 'tasks'); // Récupérer les tâches assignées à un utilisateur
     Route::get('/user/{id}/role-in-project/{projectId}', 'roleInProject'); // Récupérer le rôle de l’utilisateur dans un projet donné
     
-    Route::patch('/user/{id}/deactivate', 'deactivate'); // Mettre à jour le thème de l'utilisateur
+    Route::patch('/user/{id}/deactivate', 'deactivate'); // Désactiver un utilisateur
     Route::patch('/user/{id}/theme', 'toggleTheme'); // Mettre à jour le thème de l'utilisateur
+    Route::delete('/user/{id}/delete', 'destroy'); // Supprimer un utilisateur
 });
 
 // Routes custom pour les messages

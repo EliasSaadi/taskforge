@@ -5,6 +5,8 @@ import { PrivateRoute } from './components/PrivateRoute'
 import { PublicRoute } from './components/PublicRoute'
 import { VerrouPage } from './pages/PageVerouillage'
 import { AuthProvider } from './contexts/AuthContext';
+import { DeleteProvider } from './contexts/DeleteContext';
+import { DeleteErrorNotification } from './components/ui/DeleteErrorNotification';
 
 // Importe aussi tes autres pages ici
 import LayoutPublic from "@/components/layouts/LayouPublic";
@@ -67,7 +69,10 @@ const router = createBrowserRouter([
 function App() {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <DeleteProvider>
+        <RouterProvider router={router} />
+        <DeleteErrorNotification />
+      </DeleteProvider>
     </AuthProvider>
   )
 }

@@ -1,18 +1,19 @@
 // src/interfaces.ts
 
 export interface Utilisateur {
-  id_utilisateur: number;
+  id: number;
   nom: string;
   prenom: string;
   email: string;
   mdp: string;
   actif: boolean;
   theme: string;
-  dateCreation: string;
+  created_at: string; // Date de création (format ISO)
+  updated_at: string; // Date de mise à jour (format ISO)
 }
 
 export interface Projet {
-  id_projet: number;
+  id: number;
   dateDebut: string;
   dateFin: string;
   nom: string;
@@ -21,7 +22,7 @@ export interface Projet {
 }
 
 export interface Tache {
-  id_tache: number;
+  id: number;
   titre: string;
   description: string;
   statut: 'A faire' | 'En cours' | 'Terminé'; // enum de statut
@@ -31,7 +32,7 @@ export interface Tache {
 }
 
 export interface Message {
-  id_message: number;
+  id: number;
   contenu: string;
   date_: string;
   id_projet: number;
@@ -39,7 +40,7 @@ export interface Message {
 }
 
 export interface Role {
-  id_role: number;
+  id: number;
   nom: string;
 }
 
