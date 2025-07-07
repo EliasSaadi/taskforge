@@ -2,11 +2,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { formatDate } from '@/lib/utils/dateUtils';
 import { DeleteModal } from '@/components/modals/Delete';
 import { useDelete } from '@/contexts/DeleteContext';
+import { LoaderSpin } from '@/components/ui';
 import { useState } from 'react';
 
 const MonProfil = () => {
   const { user, logout } = useAuth();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isRedirectingAfterDelete, setIsRedirectingAfterDelete] = useState(false);
   const { isDeleting, deleteCurrentAccount } = useDelete();
 
   const handleDeleteAccount = async () => {
@@ -22,11 +24,18 @@ const MonProfil = () => {
     
     if (success) {
       console.log('Compte utilisateur supprimé avec succès');
-      logout(); // Déconnecter l'utilisateur
+      setShowDeleteModal(false);
+      setIsRedirectingAfterDelete(true);
+      
+      // Délai pour afficher le loader avant la déconnexion/redirection
+      setTimeout(() => {
+        logout(); // Déconnecter l'utilisateur
+        setIsRedirectingAfterDelete(false);
+      }, 1500);
+    } else {
+      setShowDeleteModal(false);
     }
-    // Les erreurs sont gérées automatiquement par le contexte et affichées via DeleteErrorNotification
-    
-    setShowDeleteModal(false);
+    // Les erreurs sont gérées automatiquement par le contexte et affichées via les notifications
   };
 
   // Fermer la modale
@@ -37,7 +46,15 @@ const MonProfil = () => {
   };
 
   return (
-    <div className="min-w-[512px] flex flex-col items-center gap-8">
+    <>
+      {/* LoaderSpin en plein écran pendant la redirection après suppression */}
+      {isRedirectingAfterDelete && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
+          <LoaderSpin size="xl" />
+        </div>
+      )}
+      
+      <div className="min-w-[512px] flex flex-col items-center gap-8">
         <div className="flex justify-between items-center w-full">
             <h1 className="tf-text-h2">Mon Profil</h1>
             <button className="bg-tf-dodger px-5 py-3 tf-text-button rounded-lg
@@ -101,7 +118,8 @@ const MonProfil = () => {
           itemName={user ? `${user.prenom} ${user.nom}` : undefined}
           isLoading={isDeleting}
         />
-    </div>
+      </div>
+    </>
   );
 };
 

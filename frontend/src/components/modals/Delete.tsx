@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, AlertTriangle } from 'lucide-react';
+import { LoaderDots } from '@/components/ui';
 
 interface DeleteModalProps {
   /** Si la modale est ouverte */
@@ -147,14 +148,15 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
                   text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center
                   focus:ring-4 focus:outline-none
                   disabled:opacity-50 disabled:cursor-not-allowed
-                  inline-flex items-center gap-2
+                  inline-flex items-center justify-center gap-2
                   ${config.confirmClass}
                 `}
               >
-                {isLoading && (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                {isLoading ? (
+                  <LoaderDots size="sm" color="custom" customColor="bg-white" />
+                ) : (
+                  config.confirmText
                 )}
-                {isLoading ? 'Suppression...' : config.confirmText}
               </button>
               
               <button

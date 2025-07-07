@@ -7,14 +7,15 @@ import { VerrouPage } from './pages/PageVerouillage'
 import { AuthProvider } from './contexts/AuthContext';
 import { DeleteProvider } from './contexts/DeleteContext';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { NotificationContainer } from './components/ui/NotificationContainer';
+import { NotificationContainer } from './components/ui/index';
 
 // Importe aussi tes autres pages ici
 import LayoutPublic from "@/components/layouts/LayouPublic";
 import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import MonProfil from "@/pages/MonProfil";
-import LoadersDemo from "@/pages/LoadersDemo";
+import ComponentsDemo from "@/pages/ComponentsDemo";
+import NotificationDemo from "@/pages/NotificationDemo";
 
 
 const router = createBrowserRouter([
@@ -63,7 +64,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/demo',
-    element: <LoadersDemo />
+    element: <ComponentsDemo />
+  },
+  {
+    path: '/demo/notifications',
+    element: <NotificationDemo />
   }
 ])
 

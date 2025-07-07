@@ -2,7 +2,7 @@ import { X, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { LoaderDots } from "../ui";
+import { LoaderDots, LoaderSpin } from "../ui";
 
 // Gestionnaire global des modales
 const useModalManager = () => {
@@ -71,13 +71,20 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }: {
   const { login, error, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   async function handleConnectSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
       await login(email, password);
+      setIsRedirecting(true);
       onClose();
-      navigate("/dashboard");
+      
+      // Petit délai pour afficher le loader avant la redirection
+      setTimeout(() => {
+        navigate("/dashboard");
+        setIsRedirecting(false);
+      }, 1000);
     } catch {
       // L'erreur est déjà stockée dans le contexte
     }
@@ -91,6 +98,13 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }: {
 
   return (
     <>
+      {/* LoaderSpin en plein écran pendant la redirection */}
+      {isRedirecting && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
+          <LoaderSpin size="xl" />
+        </div>
+      )}
+      
       {/* Modal Connexion */}
       <div
         id="loginModal"
@@ -158,15 +172,13 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }: {
                 </div>
                 <div className="flex flex-col items-center justify-center gap-3">
                   <button
+                    type="submit"
                     className="bg-tf-erin px-5 py-3 tf-text-button rounded-lg hover:bg-tf-lime
-                                hover:scale-105 duration-300 transition-transform disabled:opacity-50"
+                                hover:scale-105 duration-300 transition-transform disabled:opacity-50 disabled:hover:scale-100"
                     disabled={loading}
                   >
                     {loading ? (
-                      <div className="flex items-center gap-2">
-                        <span>Connexion </span>
-                        <LoaderDots size="sm" />
-                      </div>
+                      <LoaderDots size="sm" color="custom" customColor="bg-tf-night" />
                     ) : (
                       "Se connecter"
                     )}
@@ -205,6 +217,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // États pour gérer la visibilité des mots de passe
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
@@ -218,8 +231,14 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: {
     e.preventDefault();
     try {
       await register(prenom, nom, email, password, passwordConfirmation);
+      setIsRedirecting(true);
       onClose();
-      navigate("/dashboard");
+      
+      // Petit délai pour afficher le loader avant la redirection
+      setTimeout(() => {
+        navigate("/dashboard");
+        setIsRedirecting(false);
+      }, 1000);
     } catch {
       // L'erreur est déjà stockée dans le contexte
     }
@@ -228,7 +247,14 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: {
 
   return (
     <>
-    {/* Modal Inscription */}
+      {/* LoaderSpin en plein écran pendant la redirection */}
+      {isRedirecting && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
+          <LoaderSpin size="xl" />
+        </div>
+      )}
+      
+      {/* Modal Inscription */}
       <div
         id="registerModal"
         tabIndex={-1}
@@ -338,13 +364,10 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }: {
                     type="submit"
                     disabled={loading}
                     className="bg-tf-erin px-5 py-3 tf-text-button rounded-lg hover:bg-tf-lime
-                                hover:scale-105 duration-300 transition-transform disabled:opacity-50"
+                                hover:scale-105 duration-300 transition-transform disabled:opacity-50 disabled:hover:scale-100"
                   >
                     {loading ? (
-                      <div className="flex items-center gap-2">
-                        <span>Inscription en cours </span>
-                        <LoaderDots size="sm" />
-                      </div>
+                      <LoaderDots size="sm" color="custom" customColor="bg-tf-night" />
                     ) : (
                       "S'inscrire"
                     )}
