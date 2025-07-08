@@ -1,4 +1,4 @@
-import { LoaderSpin, LoaderDots, Notification } from '@/components/ui';
+import { LoaderSpin, LoaderDots, Notification, StatusSelect } from '@/components/ui';
 import { useNotification } from '@/contexts/NotificationContext';
 import { useState } from 'react';
 
@@ -9,6 +9,11 @@ import { useState } from 'react';
 export default function ComponentsDemo() {
   const { showSuccess, showError } = useNotification();
   const [showStaticNotification, setShowStaticNotification] = useState(false);
+  
+  // États pour StatusSelect
+  const [statusValue1, setStatusValue1] = useState<'à faire' | 'en cours' | 'terminé'>('à faire');
+  const [statusValue2, setStatusValue2] = useState<'à faire' | 'en cours' | 'terminé'>('en cours');
+  const [statusValue3, setStatusValue3] = useState<'à faire' | 'en cours' | 'terminé'>('terminé');
   
   return (
     <div className="min-h-screen p-8 space-y-12">
@@ -23,6 +28,7 @@ export default function ComponentsDemo() {
           <h2 className="text-lg font-semibold mb-4">Navigation rapide</h2>
           <div className="flex flex-wrap gap-4">
             <a href="#loaders" className="text-blue-600 hover:text-blue-800 underline">Loaders</a>
+            <a href="#statusselect" className="text-blue-600 hover:text-blue-800 underline">StatusSelect</a>
             <a href="#notifications" className="text-blue-600 hover:text-blue-800 underline">Notifications</a>
             <a href="#contextes" className="text-blue-600 hover:text-blue-800 underline">Utilisation en contexte</a>
           </div>
@@ -123,6 +129,94 @@ export default function ComponentsDemo() {
                   <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="gray"</code>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section StatusSelect */}
+        <section id="statusselect" className="space-y-8">
+          <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🎯 Sélecteur de Statut</h2>
+          
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="text-2xl font-semibold mb-4">StatusSelect</h3>
+            <p className="text-gray-600 mb-6">
+              Composant de sélection de statut avec couleurs spécifiques et gestion du disabled
+            </p>
+            
+            {/* États interactifs */}
+            <div className="mb-8">
+              <h4 className="text-lg font-medium mb-4">États interactifs</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
+                <div className="flex flex-col items-center gap-3">
+                  <span className="text-sm font-medium">À faire (modifiable)</span>
+                  <StatusSelect 
+                    value={statusValue1} 
+                    onChange={setStatusValue1}
+                  />
+                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="à faire"</code>
+                </div>
+                <div className="flex flex-col items-center gap-3">
+                  <span className="text-sm font-medium">En cours (modifiable)</span>
+                  <StatusSelect 
+                    value={statusValue2} 
+                    onChange={setStatusValue2}
+                  />
+                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="en cours"</code>
+                </div>
+                <div className="flex flex-col items-center gap-3">
+                  <span className="text-sm font-medium">Terminé (modifiable)</span>
+                  <StatusSelect 
+                    value={statusValue3} 
+                    onChange={setStatusValue3}
+                  />
+                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="terminé"</code>
+                </div>
+              </div>
+            </div>
+
+            {/* États disabled */}
+            <div className="mb-8">
+              <h4 className="text-lg font-medium mb-4">États disabled (non modifiables)</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
+                <div className="flex flex-col items-center gap-3">
+                  <span className="text-sm font-medium">À faire (disabled)</span>
+                  <StatusSelect 
+                    value="à faire" 
+                    disabled={true}
+                  />
+                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                </div>
+                <div className="flex flex-col items-center gap-3">
+                  <span className="text-sm font-medium">En cours (disabled)</span>
+                  <StatusSelect 
+                    value="en cours" 
+                    disabled={true}
+                  />
+                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                </div>
+                <div className="flex flex-col items-center gap-3">
+                  <span className="text-sm font-medium">Terminé (disabled)</span>
+                  <StatusSelect 
+                    value="terminé" 
+                    disabled={true}
+                  />
+                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                </div>
+              </div>
+            </div>
+
+            {/* Fonctionnalités */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="text-lg font-medium mb-2 text-blue-800">Fonctionnalités :</h4>
+              <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
+                <li><strong>Couleurs spécifiques :</strong> Dodger (bleu), Saffron (orange), Erin (vert)</li>
+                <li><strong>Style text button :</strong> Utilise la classe tf-text-button</li>
+                <li><strong>Drop shadow :</strong> Position 3x3 avec blur 6px et 25% d'opacité</li>
+                <li><strong>Sans chevron :</strong> Design épuré sans icône de dropdown</li>
+                <li><strong>Scale au hover :</strong> Effet d'agrandissement au survol (seulement si pas disabled)</li>
+                <li><strong>Gestion disabled :</strong> Opacité réduite et pas de modification possible</li>
+                <li><strong>Première lettre majuscule :</strong> Capitalisation automatique des labels</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -248,6 +342,54 @@ export default function ComponentsDemo() {
             </div>
           </div>
 
+          {/* Dans des formulaires avec StatusSelect */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="text-2xl font-semibold mb-4">Dans des formulaires de tâches</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="border border-gray-200 rounded-lg p-6 space-y-4">
+                <h4 className="font-semibold text-gray-800">Nouvelle tâche</h4>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="Nom de la tâche"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-gray-700">Statut :</label>
+                    <StatusSelect 
+                      value={statusValue1} 
+                      onChange={setStatusValue1}
+                    />
+                  </div>
+                  <button className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    Créer la tâche
+                  </button>
+                </div>
+              </div>
+              <div className="border border-gray-200 rounded-lg p-6 space-y-4">
+                <h4 className="font-semibold text-gray-800">Tâche en lecture seule</h4>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value="Révision du code"
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                  />
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-gray-700">Statut :</label>
+                    <StatusSelect 
+                      value="terminé" 
+                      disabled={true}
+                    />
+                  </div>
+                  <button disabled className="w-full bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed">
+                    Modification impossible
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Texte inline */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h3 className="text-2xl font-semibold mb-4">Texte inline</h3>
@@ -290,7 +432,8 @@ export default function ComponentsDemo() {
 {`import { 
   LoaderSpin, 
   LoaderDots, 
-  Notification 
+  Notification,
+  StatusSelect 
 } from '@/components/ui';`}
               </pre>
             </div>
@@ -309,6 +452,7 @@ showSuccess('Message de succès');`}
             <h3 className="text-lg font-semibold mb-2">Caractéristiques</h3>
             <ul className="text-gray-700 space-y-1 list-disc list-inside">
               <li><strong>Loaders :</strong> Animations optimisées, multiple tailles et couleurs</li>
+              <li><strong>StatusSelect :</strong> Sélecteur avec couleurs métier et gestion disabled</li>
               <li><strong>Notifications :</strong> Auto-fermeture (5s), fermeture manuelle, empilage</li>
               <li><strong>Structure :</strong> Composants organisés dans des sous-dossiers cohérents</li>
               <li><strong>TypeScript :</strong> Types complets et documentation JSDoc</li>
