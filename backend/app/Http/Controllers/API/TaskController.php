@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Project;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -14,6 +15,90 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+    /**
+     * Vérifier si l'utilisateur est chef de projet
+     * 
+     * @param Project $project
+     * @param int|null $userId
+     * @return bool
+     */
+    private function isChefDeProjet(Project $project, ?int $userId = null): bool
+    {
+        $userId = $userId ?? Auth::id();
+        $chefRole = Role::where('nom', 'Chef de Projet')->first();
+        
+        if (!$chefRole) {
+            return false;
+        }
+        
+        return $project->membres()
+                      ->where('user_id', $userId)
+                      ->where('role_id', $chefRole->id)
+                      ->exists();
+    }
+
+    /**
+     * Vérifier si l'utilisateur est chef de projet ou assistant
+     * 
+     * @param Project $project
+     * @param int|null $userId
+     * @return bool
+     */
+    private function isChefOuAssistant(Project $project, ?int $userId = null): bool
+    {
+        $userId = $userId ?? Auth::id();
+        $allowedRoles = Role::whereIn('nom', ['Chef de Projet', 'Assistant'])->pluck('id');
+        
+        return $project->membres()
+                      ->where('user_id', $userId)
+                      ->whereIn('role_id', $allowedRoles)
+                      ->exists();
+    }
+
+    /**
+     * Vérifier si l'utilisateur est assigné à une tâche
+     * 
+     * @param Task $task
+     * @param int|null $userId
+     * @return bool
+     */
+    private function isAssigneATache(Task $task, ?int $userId = null): bool
+    {
+        $userId = $userId ?? Auth::id();
+        
+        return $task->utilisateurs()
+                   ->where('user_id', $userId)
+                   ->exists();
+    }
+
+    /**
+     * Vérifier si l'utilisateur peut modifier/supprimer une tâche
+     * (Chef de projet ou Assistant)
+     * 
+     * @param Task $task
+     * @param int|null $userId
+     * @return bool
+     */
+    private function canModifyTask(Task $task, ?int $userId = null): bool
+    {
+        $project = $task->projet()->first();
+        return $this->isChefOuAssistant($project, $userId);
+    }
+
+    /**
+     * Vérifier si l'utilisateur peut changer le statut d'une tâche
+     * (Chef de projet, Assistant ou membre assigné à la tâche)
+     * 
+     * @param Task $task
+     * @param int|null $userId
+     * @return bool
+     */
+    private function canChangeTaskStatus(Task $task, ?int $userId = null): bool
+    {
+        $project = $task->projet()->first();
+        return $this->isChefOuAssistant($project, $userId) || 
+               $this->isAssigneATache($task, $userId);
+    }
     /**
      * Afficher la liste de toutes les tâches.
      * 
@@ -174,16 +259,7 @@ class TaskController extends Controller
             // Trouver la tâche
             $task = Task::findOrFail($id);
 
-            // Vérifier que l'utilisateur a accès au projet
-            $user = Auth::user();
-            if (!$user->projets()->where('project_id', $task->project_id)->exists()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Accès non autorisé'
-                ], 403);
-            }
-
-            // Validation des données
+            // Validation des données pour déterminer le type de modification
             $validatedData = $request->validate([
                 'titre' => 'sometimes|required|string|max:255',
                 'description' => 'nullable|string',
@@ -195,8 +271,30 @@ class TaskController extends Controller
                 'user_ids.*' => 'exists:users,id'
             ]);
 
+            // Vérifier les permissions selon le type de modification
+            $isStatusChange = isset($validatedData['statut']) && count($validatedData) === 1;
+            
+            if ($isStatusChange) {
+                // Changement de statut uniquement : Chef, Assistant ou membre assigné
+                if (!$this->canChangeTaskStatus($task)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Accès refusé - Seuls le chef de projet, l\'assistant ou les membres assignés peuvent changer le statut'
+                    ], 403);
+                }
+            } else {
+                // Modification complète : Chef ou Assistant uniquement
+                if (!$this->canModifyTask($task)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Accès refusé - Seuls le chef de projet et l\'assistant peuvent modifier cette tâche'
+                    ], 403);
+                }
+            }
+
             // Si le project_id change, vérifier l'accès au nouveau projet
             if (isset($validatedData['project_id']) && $validatedData['project_id'] !== $task->project_id) {
+                $user = Auth::user();
                 if (!$user->projets()->where('project_id', $validatedData['project_id'])->exists()) {
                     return response()->json([
                         'success' => false,
@@ -247,6 +345,68 @@ class TaskController extends Controller
     }
 
     /**
+     * Changer uniquement le statut d'une tâche.
+     * Route: PATCH /api/tasks/{id}/status
+     * 
+     * @param Request $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function updateStatus(Request $request, string $id): JsonResponse
+    {
+        try {
+            // Trouver la tâche
+            $task = Task::findOrFail($id);
+
+            // Vérifier les permissions pour changer le statut
+            if (!$this->canChangeTaskStatus($task)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Accès refusé - Seuls le chef de projet, l\'assistant ou les membres assignés peuvent changer le statut'
+                ], 403);
+            }
+
+            // Validation des données
+            $validatedData = $request->validate([
+                'statut' => 'required|in:à faire,en cours,terminé'
+            ]);
+
+            // Mettre à jour uniquement le statut
+            $oldStatus = $task->statut;
+            $task->update(['statut' => $validatedData['statut']]);
+
+            // Charger les relations pour la réponse
+            $task->load(['projet', 'utilisateurs']);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Statut de la tâche changé de '{$oldStatus}' vers '{$validatedData['statut']}'",
+                'data' => $task
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tâche non trouvée'
+            ], 404);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du statut',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Supprimer une tâche.
      * 
      * @param string $id
@@ -258,12 +418,11 @@ class TaskController extends Controller
             // Trouver la tâche
             $task = Task::findOrFail($id);
 
-            // Vérifier que l'utilisateur a accès au projet
-            $user = Auth::user();
-            if (!$user->projets()->where('project_id', $task->project_id)->exists()) {
+            // Vérifier que l'utilisateur peut modifier/supprimer la tâche
+            if (!$this->canModifyTask($task)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Accès non autorisé'
+                    'message' => 'Accès refusé - Seuls le chef de projet et l\'assistant peuvent supprimer cette tâche'
                 ], 403);
             }
 

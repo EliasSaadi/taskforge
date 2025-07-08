@@ -268,6 +268,12 @@ class TaskControllerTest extends TestCase
      */
     public function test_destroy_supprime_tache()
     {
+        // Créer le rôle Chef de Projet pour ce test
+        $chefRole = Role::create(['nom' => 'Chef de Projet']);
+        
+        // Mettre à jour le rôle de l'utilisateur pour être chef de projet
+        $this->user->projets()->updateExistingPivot($this->project->id, ['role_id' => $chefRole->id]);
+        
         $task = Task::factory()->create(['project_id' => $this->project->id]);
         $taskTitle = $task->titre;
 
@@ -280,6 +286,28 @@ class TaskControllerTest extends TestCase
                  ]);
 
         $this->assertDatabaseMissing('tasks', [
+            'id' => $task->id
+        ]);
+    }
+
+    /**
+     * Test qu'un simple membre ne peut pas supprimer une tâche
+     */
+    public function test_destroy_refuse_si_pas_chef_ou_assistant()
+    {
+        $task = Task::factory()->create(['project_id' => $this->project->id]);
+
+        // L'utilisateur est déjà un simple membre (configuré dans setUp())
+        $response = $this->deleteJson("/api/tasks/{$task->id}");
+
+        $response->assertStatus(403)
+                 ->assertJson([
+                     'success' => false,
+                     'message' => 'Accès refusé - Seuls le chef de projet et l\'assistant peuvent supprimer cette tâche'
+                 ]);
+
+        // Vérifier que la tâche existe toujours
+        $this->assertDatabaseHas('tasks', [
             'id' => $task->id
         ]);
     }

@@ -1,7 +1,26 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use Illuminate\Support\Faca// Routes custom pour les projets
+Route::controller(ProjectController::class)->group(function () {
+    Route::get('/my-projects', 'getUserProjects'); // Récupérer les projets de l'utilisateur connecté
+    Route::get('/projects/{id}/members', 'members'); // Récupérer les membres d'un projet
+    Route::get('/projects/{id}/tasks', 'tasks'); // Récupérer les tâches d'un projet
+    
+    // Gestion des membres et rôles (Chef de projet uniquement)
+    Route::post('/projects/{id}/members', 'addMember'); // Ajouter un membre au projet
+    Route::put('/projects/{id}/members/{user}', 'updateMemberRole'); // Modifier le rôle d'un membre
+    Route::delete('/projects/{id}/members/{user}', 'removeMember'); // Retirer un membre du projet
+});
+
+// Routes custom pour les tâches
+Route::controller(TaskController::class)->group(function () {
+    Route::post('/tasks/{id}/assign/{user}', 'assign'); // Assignation d'un user à une tâche
+    Route::delete('/tasks/{id}/unassign/{user}', 'unassign'); // Retirer un user d'une tâche
+    Route::get('/tasks/{id}/users', 'users'); // Voir tous les utilisateurs assignés à une tâche
+    
+    // Changement de statut (Chef, Assistant ou membre assigné)
+    Route::patch('/tasks/{id}/status', 'updateStatus'); // Changer uniquement le statut d'une tâche
+});e App\Http\Controllers\AuthController;
 use App\Http\Controllers\API\ProjectController;
 use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\UserController;
@@ -37,28 +56,20 @@ Route::controller(ProjectController::class)->group(function () {
     Route::get('/my-projects', 'getUserProjects'); // Récupérer les projets de l'utilisateur connecté
     Route::get('/projects/{id}/members', 'members'); // Récupérer les membres d'un projet
     Route::get('/projects/{id}/tasks', 'tasks'); // Récupérer les tâches d'un projet
-    
-    // Gestion des membres et rôles (Chef de projet uniquement)
-    Route::post('/projects/{id}/members', 'addMember'); // Ajouter un membre au projet
-    Route::put('/projects/{id}/members/{user}', 'updateMemberRole'); // Modifier le rôle d'un membre
-    Route::delete('/projects/{id}/members/{user}', 'removeMember'); // Retirer un membre du projet
 });
 
 // Routes custom pour les tâches
 Route::controller(TaskController::class)->group(function () {
-    Route::post('/tasks/{id}/assign/{user}', 'assign'); // Assignation d'un user à une tâche
-    Route::delete('/tasks/{id}/unassign/{user}', 'unassign'); // Retirer un user d'une tâche
+    Route::post('/tasks/{id}/assign/{user}', 'assign'); // Assignation d’un user à une tâche
+    Route::delete('/tasks/{id}/unassign/{user}', 'unassign'); // Retirer un user d’une tâche
     Route::get('/tasks/{id}/users', 'users'); // Voir tous les utilisateurs assignés à une tâche
-    
-    // Changement de statut (Chef, Assistant ou membre assigné)
-    Route::patch('/tasks/{id}/status', 'updateStatus'); // Changer uniquement le statut d'une tâche
 });
 
 // Routes custom pour les utilisateurs
 Route::controller(UserController::class)->group(function () {
-    Route::get('/user/{id}/projects', 'projects'); // Récupérer les projets d'un utilisateur
+    Route::get('/user/{id}/projects', 'projects'); // Récupérer les projets d’un utilisateur
     Route::get('/user/{id}/tasks', 'tasks'); // Récupérer les tâches assignées à un utilisateur
-    Route::get('/user/{id}/role-in-project/{projectId}', 'roleInProject'); // Récupérer le rôle de l'utilisateur dans un projet donné
+    Route::get('/user/{id}/role-in-project/{projectId}', 'roleInProject'); // Récupérer le rôle de l’utilisateur dans un projet donné
     
     Route::patch('/user/{id}/deactivate', 'deactivate'); // Désactiver un utilisateur
     Route::patch('/user/{id}/theme', 'toggleTheme'); // Mettre à jour le thème de l'utilisateur

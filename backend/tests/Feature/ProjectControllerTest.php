@@ -316,9 +316,15 @@ class ProjectControllerTest extends TestCase
      */
     public function test_destroy_supprime_un_projet()
     {
+        // Créer le rôle "Chef de Projet" pour le test
+        $chefRole = Role::create(['nom' => 'Chef de Projet']);
+
         $project = Project::factory()->create([
             'nom' => 'Projet à supprimer'
         ]);
+
+        // Ajouter l'utilisateur comme chef de projet
+        $project->membres()->attach($this->user->id, ['role_id' => $chefRole->id]);
 
         $response = $this->deleteJson("/api/projects/{$project->id}");
 
@@ -329,6 +335,36 @@ class ProjectControllerTest extends TestCase
                  ]);
 
         $this->assertDatabaseMissing('projects', [
+            'id' => $project->id
+        ]);
+    }
+
+    /**
+     * Test qu'un utilisateur non-chef de projet ne peut pas supprimer un projet
+     */
+    public function test_destroy_refuse_si_pas_chef_de_projet()
+    {
+        // Créer les rôles
+        $chefRole = Role::create(['nom' => 'Chef de Projet']);
+        $membreRole = Role::create(['nom' => 'Membre']);
+
+        $project = Project::factory()->create([
+            'nom' => 'Projet protégé'
+        ]);
+
+        // Ajouter l'utilisateur comme simple membre (pas chef)
+        $project->membres()->attach($this->user->id, ['role_id' => $membreRole->id]);
+
+        $response = $this->deleteJson("/api/projects/{$project->id}");
+
+        $response->assertStatus(403)
+                 ->assertJson([
+                     'success' => false,
+                     'message' => 'Accès refusé - Seul le chef de projet peut supprimer ce projet'
+                 ]);
+
+        // Vérifier que le projet existe toujours
+        $this->assertDatabaseHas('projects', [
             'id' => $project->id
         ]);
     }
