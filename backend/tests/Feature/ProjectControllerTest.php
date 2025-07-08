@@ -105,6 +105,43 @@ class ProjectControllerTest extends TestCase
     }
 
     /**
+     * Test que le créateur d'un projet devient automatiquement chef de projet
+     */
+    public function test_store_ajoute_createur_comme_chef_de_projet()
+    {
+        // Créer le rôle "Chef de Projet" pour le test
+        $chefRole = Role::create([
+            'nom' => 'Chef de Projet',
+            'description' => 'Responsable du projet avec tous les droits'
+        ]);
+
+        $projectData = [
+            'nom' => 'Projet avec Chef',
+            'description' => 'Test du rôle automatique',
+            'date_debut' => now()->addDay()->toDateString(),
+            'date_fin' => now()->addDays(30)->toDateString(),
+        ];
+
+        $response = $this->postJson('/api/projects', $projectData);
+
+        if ($response->status() !== 201) {
+            dd($response->json());
+        }
+
+        $response->assertStatus(201);
+        
+        $project = Project::where('nom', 'Projet avec Chef')->first();
+        $this->assertNotNull($project);
+
+        // Vérifier que l'utilisateur connecté est membre du projet
+        $this->assertTrue($project->membres()->where('user_id', $this->user->id)->exists());
+
+        // Vérifier que l'utilisateur a le rôle "Chef de Projet"
+        $membership = $project->membres()->where('user_id', $this->user->id)->first();
+        $this->assertEquals($chefRole->id, $membership->pivot->role_id);
+    }
+
+    /**
      * Test de validation lors de la création d'un projet
      */
     public function test_store_echoue_avec_donnees_invalides()

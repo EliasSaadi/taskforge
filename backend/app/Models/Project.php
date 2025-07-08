@@ -19,11 +19,21 @@ class Project extends Model
 
     // ✅ Relations
 
-    // 1. Liste des membres du projet
+    // 1. Liste des membres du projet avec leurs rôles
     public function membres()
     {
         return $this->belongsToMany(User::class, 'project_user')
                     ->withPivot('role_id')
+                    ->withTimestamps();
+    }
+
+    // 1bis. Relation pour accéder facilement aux rôles des membres
+    public function membresAvecRoles()
+    {
+        return $this->belongsToMany(User::class, 'project_user')
+                    ->withPivot('role_id')
+                    ->join('roles', 'project_user.role_id', '=', 'roles.id')
+                    ->select('users.*', 'roles.nom as role_nom', 'project_user.role_id')
                     ->withTimestamps();
     }
 

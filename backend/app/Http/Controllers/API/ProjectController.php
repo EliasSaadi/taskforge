@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -57,6 +59,12 @@ class ProjectController extends Controller
 
             // Créer le projet
             $project = Project::create($validatedData);
+
+            // Ajouter automatiquement le créateur comme "Chef de Projet"
+            $chefRole = Role::where('nom', 'Chef de Projet')->first();
+            if ($chefRole) {
+                $project->membres()->attach(Auth::id(), ['role_id' => $chefRole->id]);
+            }
 
             // Charger les relations pour la réponse
             $project->load(['membres', 'taches', 'messages']);
