@@ -9,3 +9,6 @@ export { NotificationContainer } from './notifications';
 
 // Exports du sélecteur de statut
 export { StatusSelect, type StatusSelectProps } from './statusSelect';
+
+// Exports du sélecteur de rôle
+export { RoleSelect, type RoleSelectProps } from './roleSelect';

@@ -1,4 +1,4 @@
-import { LoaderSpin, LoaderDots, Notification, StatusSelect } from '@/components/ui';
+import { LoaderSpin, LoaderDots, Notification, StatusSelect, RoleSelect } from '@/components/ui';
 import { useNotification } from '@/contexts/NotificationContext';
 import { useState } from 'react';
 
@@ -15,451 +15,430 @@ export default function ComponentsDemo() {
   const [statusValue2, setStatusValue2] = useState<'à faire' | 'en cours' | 'terminé'>('en cours');
   const [statusValue3, setStatusValue3] = useState<'à faire' | 'en cours' | 'terminé'>('terminé');
   
+  // États pour RoleSelect
+  const [roleValue1, setRoleValue1] = useState<'Chef de Projet' | 'Assistant' | 'Membre'>('Chef de Projet');
+  const [roleValue2, setRoleValue2] = useState<'Chef de Projet' | 'Assistant' | 'Membre'>('Assistant');
+  const [roleValue3, setRoleValue3] = useState<'Chef de Projet' | 'Assistant' | 'Membre'>('Membre');
+  
   return (
-    <div className="min-h-screen p-8 space-y-12">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4 text-center">Démonstration des Composants UI</h1>
-        <p className="text-gray-600 text-center mb-8">
-          Tous les composants UI réutilisables avec leurs variantes et exemples d'utilisation
-        </p>
+    <div className="min-h-screen">
+      {/* Navigation fixe en haut */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg border-b border-gray-200">
+        <div className="flex items-center justify-center max-w-6xl mx-auto px-8 py-4 gap-6">
+          <a href="#loaders" className="px-4 py-2 tf-text-button hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-300">
+            🔄 Loaders
+          </a>
+          <a href="#statusselect" className="px-4 py-2 tf-text-button hover:text-green-600 hover:bg-green-100 rounded-lg transition-all duration-300">
+            🎯 StatusSelect
+          </a>
+          <a href="#roleselect" className="px-4 py-2 tf-text-button hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all duration-200">
+            👥 RoleSelect
+          </a>
+          <a href="#notifications" className="px-4 py-2 tf-text-button hover:text-purple-600 hover:bg-purple-100 rounded-lg transition-all duration-300">
+            🔔 Notifications
+          </a>
+        </div>
+      </nav>
 
-        {/* Section Navigation */}
-        <nav className="bg-gray-50 p-6 rounded-lg mb-8">
-          <h2 className="text-lg font-semibold mb-4">Navigation rapide</h2>
-          <div className="flex flex-wrap gap-4">
-            <a href="#loaders" className="text-blue-600 hover:text-blue-800 underline">Loaders</a>
-            <a href="#statusselect" className="text-blue-600 hover:text-blue-800 underline">StatusSelect</a>
-            <a href="#notifications" className="text-blue-600 hover:text-blue-800 underline">Notifications</a>
-            <a href="#contextes" className="text-blue-600 hover:text-blue-800 underline">Utilisation en contexte</a>
-          </div>
-        </nav>
-
-        {/* Section Loaders */}
-        <section id="loaders" className="space-y-8">
-          <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🔄 Composants de Chargement</h2>
-          
-          {/* LoaderSpin */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">LoaderSpin</h3>
-            <p className="text-gray-600 mb-6">Composant avec animation de double cercle rotatif</p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 bg-gray-50 rounded-lg">
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-sm font-medium">Small</span>
-                <LoaderSpin size="sm" />
-                <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="sm"</code>
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-sm font-medium">Medium</span>
-                <LoaderSpin size="md" />
-                <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="md"</code>
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-sm font-medium">Large</span>
-                <LoaderSpin size="lg" />
-                <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="lg"</code>
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <span className="text-sm font-medium">Extra Large</span>
-                <LoaderSpin size="xl" />
-                <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="xl"</code>
-              </div>
-            </div>
-          </div>
-
-          {/* LoaderDots */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">LoaderDots</h3>
-            <p className="text-gray-600 mb-6">Composant avec animation de rebond de trois points</p>
-            
-            {/* Tailles */}
-            <div className="mb-8">
-              <h4 className="text-lg font-medium mb-4">Tailles disponibles</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 bg-gray-50 rounded-lg">
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Extra Small</span>
-                  <LoaderDots size="xs" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="xs"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Small</span>
-                  <LoaderDots size="sm" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="sm"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Medium</span>
-                  <LoaderDots size="md" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="md"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Large</span>
-                  <LoaderDots size="lg" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="lg"</code>
-                </div>
-              </div>
-            </div>
-
-            {/* Couleurs */}
-            <div>
-              <h4 className="text-lg font-medium mb-4">Couleurs disponibles</h4>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-6 p-4 bg-gray-50 rounded-lg">
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Blue (défaut)</span>
-                  <LoaderDots color="blue" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="blue"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Green</span>
-                  <LoaderDots color="green" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="green"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Purple</span>
-                  <LoaderDots color="purple" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="purple"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Red</span>
-                  <LoaderDots color="red" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="red"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Gray</span>
-                  <LoaderDots color="gray" />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="gray"</code>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section StatusSelect */}
-        <section id="statusselect" className="space-y-8">
-          <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🎯 Sélecteur de Statut</h2>
-          
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">StatusSelect</h3>
-            <p className="text-gray-600 mb-6">
-              Composant de sélection de statut avec couleurs spécifiques et gestion du disabled
+      {/* Contenu principal avec padding-top pour compenser la navbar fixe */}
+      <div className="pt-24 p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4">Démonstration des Composants UI</h1>
+            <p className="text-gray-600 text-lg">
+              Tous les composants UI réutilisables avec leurs variantes et exemples d'utilisation
             </p>
-            
-            {/* États interactifs */}
-            <div className="mb-8">
-              <h4 className="text-lg font-medium mb-4">États interactifs</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">À faire (modifiable)</span>
-                  <StatusSelect 
-                    value={statusValue1} 
-                    onChange={setStatusValue1}
-                  />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="à faire"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">En cours (modifiable)</span>
-                  <StatusSelect 
-                    value={statusValue2} 
-                    onChange={setStatusValue2}
-                  />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="en cours"</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Terminé (modifiable)</span>
-                  <StatusSelect 
-                    value={statusValue3} 
-                    onChange={setStatusValue3}
-                  />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="terminé"</code>
-                </div>
-              </div>
-            </div>
-
-            {/* États disabled */}
-            <div className="mb-8">
-              <h4 className="text-lg font-medium mb-4">États disabled (non modifiables)</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">À faire (disabled)</span>
-                  <StatusSelect 
-                    value="à faire" 
-                    disabled={true}
-                  />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">En cours (disabled)</span>
-                  <StatusSelect 
-                    value="en cours" 
-                    disabled={true}
-                  />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <span className="text-sm font-medium">Terminé (disabled)</span>
-                  <StatusSelect 
-                    value="terminé" 
-                    disabled={true}
-                  />
-                  <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
-                </div>
-              </div>
-            </div>
-
-            {/* Fonctionnalités */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="text-lg font-medium mb-2 text-blue-800">Fonctionnalités :</h4>
-              <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
-                <li><strong>Couleurs spécifiques :</strong> Dodger (bleu), Saffron (orange), Erin (vert)</li>
-                <li><strong>Style text button :</strong> Utilise la classe tf-text-button</li>
-                <li><strong>Drop shadow :</strong> Position 3x3 avec blur 6px et 25% d'opacité</li>
-                <li><strong>Sans chevron :</strong> Design épuré sans icône de dropdown</li>
-                <li><strong>Scale au hover :</strong> Effet d'agrandissement au survol (seulement si pas disabled)</li>
-                <li><strong>Gestion disabled :</strong> Opacité réduite et pas de modification possible</li>
-                <li><strong>Première lettre majuscule :</strong> Capitalisation automatique des labels</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Section Notifications */}
-        <section id="notifications" className="space-y-8">
-          <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🔔 Système de Notifications</h2>
-          
-          {/* Tests de notifications contextuelles */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">Notifications contextuelles</h3>
-            <p className="text-gray-600 mb-6">
-              Système global de notifications avec auto-fermeture et empilage
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h4 className="text-lg font-medium">Tests de base</h4>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => showSuccess('Votre action a été effectuée avec succès !')}
-                    className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Notification de succès
-                  </button>
-                  <button
-                    onClick={() => showError('Une erreur s\'est produite lors de l\'opération.')}
-                    className="w-full bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors"
-                  >
-                    Notification d'erreur
-                  </button>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <h4 className="text-lg font-medium">Tests avancés</h4>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => {
-                      showSuccess('Les données ont été sauvegardées.', 'Sauvegarde réussie');
-                      setTimeout(() => {
-                        showError('Impossible de se connecter au serveur.', 'Erreur de connexion');
-                      }, 1000);
-                    }}
-                    className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Titres personnalisés
-                  </button>
-                  <button
-                    onClick={() => {
-                      showSuccess('Première notification');
-                      setTimeout(() => showError('Notification d\'erreur'), 500);
-                      setTimeout(() => showSuccess('Deuxième notification'), 1000);
-                    }}
-                    className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors"
-                  >
-                    Notifications multiples
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
 
-          {/* Notification statique pour démonstration */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">Composant Notification statique</h3>
-            <p className="text-gray-600 mb-6">
-              Aperçu visuel des variantes du composant Notification
-            </p>
-            
-            <div className="space-y-4">
-              <button
-                onClick={() => setShowStaticNotification(!showStaticNotification)}
-                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                {showStaticNotification ? 'Masquer' : 'Afficher'} les notifications statiques
-              </button>
+          <div className="space-y-16">
+            {/* Section Loaders */}
+            <section id="loaders" className="space-y-4">
+              <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🔄 Composants de Chargement</h2>
 
-              {showStaticNotification && (
-                <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="max-w-md">
-                    <Notification
-                      type="success"
-                      message="Votre compte a bien été supprimé."
-                      onClose={() => setShowStaticNotification(false)}
-                      title="Suppression réussie"
-                    />
+              {/* LoaderSpin */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-4">LoaderSpin</h3>
+                <p className="text-gray-600 mb-6">Composant avec animation de double cercle rotatif</p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex flex-col items-center gap-3">
+                    <span className="text-sm font-medium">Small</span>
+                    <LoaderSpin size="sm" />
+                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="sm"</code>
                   </div>
-                  <div className="max-w-md">
-                    <Notification
-                      type="error"
-                      message="Impossible de supprimer l'élément. Vérifiez vos permissions."
-                      onClose={() => setShowStaticNotification(false)}
-                      title="Erreur de suppression"
-                    />
+                  <div className="flex flex-col items-center gap-3">
+                    <span className="text-sm font-medium">Medium</span>
+                    <LoaderSpin size="md" />
+                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="md"</code>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <span className="text-sm font-medium">Large</span>
+                    <LoaderSpin size="lg" />
+                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="lg"</code>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <span className="text-sm font-medium">Extra Large</span>
+                    <LoaderSpin size="xl" />
+                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="xl"</code>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
-        </section>
+              </div>
 
-        {/* Section Utilisation en contexte */}
-        <section id="contextes" className="space-y-8">
-          <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🎯 Utilisation en Contexte</h2>
-          
-          {/* Dans des boutons */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">Dans des boutons</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button className="bg-blue-500 text-white px-4 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-600 transition-colors">
-                <LoaderDots size="sm" color="custom" customColor="bg-white" />
-                <span>Envoi en cours...</span>
-              </button>
-              <button className="bg-green-500 text-white px-4 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-green-600 transition-colors">
-                <LoaderSpin size="sm" />
-                <span>Traitement...</span>
-              </button>
-              <button className="bg-purple-500 text-white px-4 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-600 transition-colors">
-                <LoaderDots size="sm" color="custom" customColor="bg-white" />
-                <span>Sauvegarde...</span>
-              </button>
-            </div>
-          </div>
+              {/* LoaderDots */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-4">LoaderDots</h3>
+                <p className="text-gray-600 mb-6">Composant avec animation de rebond de trois points</p>
 
-          {/* Dans des formulaires avec StatusSelect */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">Dans des formulaires de tâches</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border border-gray-200 rounded-lg p-6 space-y-4">
-                <h4 className="font-semibold text-gray-800">Nouvelle tâche</h4>
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    placeholder="Nom de la tâche"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium text-gray-700">Statut :</label>
-                    <StatusSelect 
-                      value={statusValue1} 
-                      onChange={setStatusValue1}
-                    />
+                {/* Tailles */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-medium mb-4">Tailles disponibles</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 bg-gray-50 rounded-lg">
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Extra Small</span>
+                      <LoaderDots size="xs" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="xs"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Small</span>
+                      <LoaderDots size="sm" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="sm"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Medium</span>
+                      <LoaderDots size="md" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="md"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Large</span>
+                      <LoaderDots size="lg" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">size="lg"</code>
+                    </div>
                   </div>
-                  <button className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                    Créer la tâche
-                  </button>
+                </div>
+
+                {/* Couleurs */}
+                <div>
+                  <h4 className="text-lg font-medium mb-4">Couleurs disponibles</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-6 p-4 bg-gray-50 rounded-lg">
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Blue (défaut)</span>
+                      <LoaderDots color="blue" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="blue"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Green</span>
+                      <LoaderDots color="green" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="green"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Purple</span>
+                      <LoaderDots color="purple" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="purple"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Red</span>
+                      <LoaderDots color="red" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="red"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Gray</span>
+                      <LoaderDots color="gray" />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">color="gray"</code>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="border border-gray-200 rounded-lg p-6 space-y-4">
-                <h4 className="font-semibold text-gray-800">Tâche en lecture seule</h4>
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value="Révision du code"
-                    disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
-                  />
-                  <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium text-gray-700">Statut :</label>
-                    <StatusSelect 
-                      value="terminé" 
-                      disabled={true}
-                    />
+            </section>
+
+            {/* Section StatusSelect */}
+            <section id="statusselect" className="space-y-4">
+              <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🎯 Sélecteur de Statut</h2>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-4">StatusSelect</h3>
+                <p className="text-gray-600 mb-6">
+                  Composant de sélection de statut avec couleurs spécifiques et gestion du disabled
+                </p>
+
+                {/* États interactifs */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-medium mb-4">États interactifs</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">À faire (modifiable)</span>
+                      <StatusSelect
+                        value={statusValue1}
+                        onChange={setStatusValue1}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="à faire"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">En cours (modifiable)</span>
+                      <StatusSelect
+                        value={statusValue2}
+                        onChange={setStatusValue2}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="en cours"</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Terminé (modifiable)</span>
+                      <StatusSelect
+                        value={statusValue3}
+                        onChange={setStatusValue3}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">value="terminé"</code>
+                    </div>
                   </div>
-                  <button disabled className="w-full bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed">
-                    Modification impossible
-                  </button>
+                </div>
+
+                {/* États disabled */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-medium mb-4">États disabled (non modifiables)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">À faire (disabled)</span>
+                      <StatusSelect
+                        value="à faire"
+                        disabled={true}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">En cours (disabled)</span>
+                      <StatusSelect
+                        value="en cours"
+                        disabled={true}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Terminé (disabled)</span>
+                      <StatusSelect
+                        value="terminé"
+                        disabled={true}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </section>
 
-          {/* Texte inline */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">Texte inline</h3>
-            <div className="space-y-4 text-gray-700">
-              <p className="flex items-center gap-2">
-                Chargement des données <LoaderDots size="xs" /> veuillez patienter...
-              </p>
-              <p className="flex items-center gap-2">
-                Connexion au serveur <LoaderSpin size="sm" />
-              </p>
-              <p className="flex items-center gap-2">
-                Téléchargement en cours <LoaderDots size="sm" color="green" /> 45%
-              </p>
-            </div>
-          </div>
+            {/* Section RoleSelect */}
+            <section id="roleselect" className="space-y-4">
+              <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">👥 Sélecteur de Rôle</h2>
 
-          {/* Sections de contenu */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-2xl font-semibold mb-4">Sections de contenu</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center min-h-[200px]">
-                <LoaderSpin size="lg" />
-                <p className="mt-4 text-gray-600">Chargement des projets...</p>
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-4">RoleSelect</h3>
+                <p className="text-gray-600 mb-6">
+                  Composant de sélection de rôle avec couleurs spécifiques et gestion du disabled
+                </p>
+
+                {/* États interactifs */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-medium mb-4">Rôles interactifs</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Chef de Projet (modifiable)</span>
+                      <RoleSelect
+                        value={roleValue1}
+                        onChange={setRoleValue1}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">Erin (vert)</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Assistant (modifiable)</span>
+                      <RoleSelect
+                        value={roleValue2}
+                        onChange={setRoleValue2}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">Saffron (jaune)</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Membre (modifiable)</span>
+                      <RoleSelect
+                        value={roleValue3}
+                        onChange={setRoleValue3}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">Battleship (gris)</code>
+                    </div>
+                  </div>
+                </div>
+
+                {/* États disabled */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-medium mb-4">Rôles disabled (non modifiables)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg">
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Chef de Projet (disabled)</span>
+                      <RoleSelect
+                        value="Chef de Projet"
+                        disabled={true}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Assistant (disabled)</span>
+                      <RoleSelect
+                        value="Assistant"
+                        disabled={true}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-sm font-medium">Membre (disabled)</span>
+                      <RoleSelect
+                        value="Membre"
+                        disabled={true}
+                      />
+                      <code className="text-xs bg-gray-200 px-2 py-1 rounded">disabled=true</code>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center min-h-[200px]">
-                <LoaderDots size="lg" color="purple" />
-                <p className="mt-4 text-gray-600">Synchronisation en cours...</p>
+            </section>
+
+            {/* Section Notifications */}
+            <section id="notifications" className="space-y-4">
+              <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">🔔 Système de Notifications</h2>
+
+              {/* Tests de notifications contextuelles */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-4">Notifications contextuelles</h3>
+                <p className="text-gray-600 mb-6">
+                  Système global de notifications avec auto-fermeture et empilage
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-medium">Tests de base</h4>
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => showSuccess('Votre action a été effectuée avec succès !')}
+                        className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors"
+                      >
+                        Notification de succès
+                      </button>
+                      <button
+                        onClick={() => showError('Une erreur s\'est produite lors de l\'opération.')}
+                        className="w-full bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        Notification d'erreur
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-medium">Tests avancés</h4>
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => {
+                          showSuccess('Les données ont été sauvegardées.', 'Sauvegarde réussie');
+                          setTimeout(() => {
+                            showError('Impossible de se connecter au serveur.', 'Erreur de connexion');
+                          }, 1000);
+                        }}
+                        className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Titres personnalisés
+                      </button>
+                      <button
+                        onClick={() => {
+                          showSuccess('Première notification');
+                          setTimeout(() => showError('Notification d\'erreur'), 500);
+                          setTimeout(() => showSuccess('Deuxième notification'), 1000);
+                        }}
+                        className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                      >
+                        Notifications multiples
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Documentation technique */}
-        <section className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4">📚 Documentation Technique</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Import des composants</h3>
-              <pre className="bg-gray-800 text-white p-4 rounded text-sm overflow-x-auto">
-{`import { 
-  LoaderSpin, 
-  LoaderDots, 
-  Notification,
-  StatusSelect 
-} from '@/components/ui';`}
-              </pre>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Contexte de notification</h3>
-              <pre className="bg-gray-800 text-white p-4 rounded text-sm overflow-x-auto">
-{`import { useNotification } from '@/contexts/NotificationContext';
+              {/* Notification statique pour démonstration */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-4">Composant Notification statique</h3>
+                <p className="text-gray-600 mb-6">
+                  Aperçu visuel des variantes du composant Notification
+                </p>
 
-const { showSuccess, showError } = useNotification();
-showSuccess('Message de succès');`}
-              </pre>
-            </div>
+                <div className="space-y-4">
+                  <button
+                    onClick={() => setShowStaticNotification(!showStaticNotification)}
+                    className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    {showStaticNotification ? 'Masquer' : 'Afficher'} les notifications statiques
+                  </button>
+
+                  {showStaticNotification && (
+                    <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                      <div className="max-w-md">
+                        <Notification
+                          type="success"
+                          message="Votre compte a bien été supprimé."
+                          onClose={() => setShowStaticNotification(false)}
+                          title="Suppression réussie"
+                        />
+                      </div>
+                      <div className="max-w-md">
+                        <Notification
+                          type="error"
+                          message="Impossible de supprimer l'élément. Vérifiez vos permissions."
+                          onClose={() => setShowStaticNotification(false)}
+                          title="Erreur de suppression"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+
+            {/* Documentation technique */}
+            <section className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">📚 Documentation Technique</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Import des composants</h3>
+                  <pre className="bg-gray-800 text-white p-4 rounded text-sm overflow-x-auto">
+                    {`import { 
+    LoaderSpin, 
+    LoaderDots, 
+    Notification,
+    StatusSelect,
+    RoleSelect 
+  } from '@/components/ui';`}
+                  </pre>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Contexte de notification</h3>
+                  <pre className="bg-gray-800 text-white p-4 rounded text-sm overflow-x-auto">
+                    {`import { useNotification } from '@/contexts/NotificationContext';
+
+  const { showSuccess, showError } = useNotification();
+  showSuccess('Message de succès');`}
+                  </pre>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-2">Caractéristiques</h3>
+                <ul className="text-gray-700 space-y-1 list-disc list-inside">
+                  <li><strong>Loaders :</strong> Animations optimisées, multiple tailles et couleurs</li>
+                  <li><strong>StatusSelect :</strong> Sélecteur avec couleurs métier et gestion disabled</li>
+                  <li><strong>RoleSelect :</strong> Sélecteur de rôles avec hiérarchie visuelle</li>
+                  <li><strong>Notifications :</strong> Auto-fermeture (5s), fermeture manuelle, empilage</li>
+                  <li><strong>Structure :</strong> Composants organisés dans des sous-dossiers cohérents</li>
+                  <li><strong>TypeScript :</strong> Types complets et documentation JSDoc</li>
+                  <li><strong>Responsive :</strong> Adaptatif sur tous les écrans</li>
+                </ul>
+              </div>
+            </section>
           </div>
-          
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2">Caractéristiques</h3>
-            <ul className="text-gray-700 space-y-1 list-disc list-inside">
-              <li><strong>Loaders :</strong> Animations optimisées, multiple tailles et couleurs</li>
-              <li><strong>StatusSelect :</strong> Sélecteur avec couleurs métier et gestion disabled</li>
-              <li><strong>Notifications :</strong> Auto-fermeture (5s), fermeture manuelle, empilage</li>
-              <li><strong>Structure :</strong> Composants organisés dans des sous-dossiers cohérents</li>
-              <li><strong>TypeScript :</strong> Types complets et documentation JSDoc</li>
-              <li><strong>Responsive :</strong> Adaptatif sur tous les écrans</li>
-            </ul>
-          </div>
-        </section>
+        </div>
       </div>
     </div>
   );
