@@ -13,6 +13,7 @@ type AuthContextType = {
   loading: boolean;
   isLoggingOut: boolean;
   error: string | null;
+  clearError: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,13 +31,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        // Essayer de récupérer l'utilisateur sans cookie CSRF d'abord
+        // D'abord récupérer le cookie CSRF pour Laravel Sanctum
+        await api.get("/sanctum/csrf-cookie");
+        
+        // Ensuite essayer de récupérer l'utilisateur connecté
         const response = await api.get("/api/user");
-        if (response.data) {
+        
+        // Vérifier que la réponse contient bien un utilisateur valide avec un ID
+        if (response.data && response.data.id) {
           setUser(response.data);
+        } else {
+          setUser(null);
         }
-      } catch (err) {
-        // Si ça échoue, l'utilisateur n'est pas connecté (normal)
+      } catch (err: any) {
+        // Si ça échoue, l'utilisateur n'est pas connecté
         setUser(null);
       } finally {
         setLoading(false);
@@ -64,10 +72,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(res.data);
       }
     } catch (err: any) {
-      const message =
-        err.response?.data?.message === "These credentials do not match our records."
-          ? "Email ou mot de passe incorrect."
-          : "Erreur lors de la connexion.";
+      let message = "Erreur lors de la connexion.";
+      
+      // Gestion des erreurs spécifiques du backend
+      if (err.response?.data?.message) {
+        if (err.response.data.message === "These credentials do not match our records.") {
+          message = "Email ou mot de passe incorrect.";
+        } else {
+          message = err.response.data.message;
+        }
+      } else if (err.response?.data?.errors) {
+        // Gestion des erreurs de validation Laravel
+        const errors = err.response.data.errors;
+        const firstError = Object.values(errors)[0];
+        if (Array.isArray(firstError) && firstError.length > 0) {
+          message = firstError[0] as string;
+        }
+      }
+      
       setError(message);
       throw new Error(message);
     } finally {
@@ -94,7 +116,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(registerResponse.data.user);
       }
     } catch (err: any) {
-      const message = err.response?.data?.message || "Erreur lors de l'inscription.";
+      let message = "Erreur lors de l'inscription.";
+      
+      // Gestion des erreurs spécifiques du backend
+      if (err.response?.data?.message) {
+        message = err.response.data.message;
+      } else if (err.response?.data?.errors) {
+        // Gestion des erreurs de validation Laravel
+        const errors = err.response.data.errors;
+        const errorMessages = [];
+        
+        // Récupérer tous les messages d'erreur
+        for (const field in errors) {
+          if (Array.isArray(errors[field])) {
+            errorMessages.push(...errors[field]);
+          }
+        }
+        
+        if (errorMessages.length > 0) {
+          message = errorMessages.join(' ');
+        }
+      }
+      
       setError(message);
       throw new Error(message);
     } finally {
@@ -117,8 +160,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, loading, isLoggingOut, error }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, loading, isLoggingOut, error, clearError }}>
       {children}
     </AuthContext.Provider>
   );
