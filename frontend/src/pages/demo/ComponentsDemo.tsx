@@ -1,4 +1,5 @@
 import { LoaderSpin, LoaderDots, Notification, StatusSelect, RoleSelect } from '@/components/ui';
+import ProjectCard from '@/components/ProjectCard';
 import { useNotification } from '@/contexts/NotificationContext';
 import { useState } from 'react';
 
@@ -435,6 +436,29 @@ export default function ComponentsDemo() {
                   <li><strong>TypeScript :</strong> Types complets et documentation JSDoc</li>
                   <li><strong>Responsive :</strong> Adaptatif sur tous les écrans</li>
                 </ul>
+              </div>
+            </section>
+
+            {/* Section pour les composants de démonstration */}
+            <section className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-3xl font-bold mb-4">Exemples de Composants</h2>
+              <p className="text-gray-600 mb-6">
+                Voici quelques exemples de composants réutilisables dans l'application
+              </p>
+
+              {/* Exemple de carte projet */}
+              <div className="space-y-6">
+                <ProjectCard
+                  project={{
+                    id: 1,
+                    nom: 'Projet Alpha',
+                    description: 'Description du projet Alpha',
+                    dateDebut: '2027-01-01',
+                    dateFin: '2028-12-31',
+                    dateCreation: '2023-01-01',
+                  }}
+                  onProjectDeleted={(id) => console.log(`Projet ${id} supprimé`)}
+                />
               </div>
             </section>
           </div>

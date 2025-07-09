@@ -303,9 +303,35 @@ class ProjectController extends Controller
                 ], 401);
             }
 
-            $projects = $user->projets()->with(['membres', 'taches', 'messages'])
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+            // Récupérer les projets avec le rôle de l'utilisateur depuis la table pivot
+            $projects = Project::join('project_user', 'projects.id', '=', 'project_user.project_id')
+                              ->join('roles', 'project_user.role_id', '=', 'roles.id')
+                              ->where('project_user.user_id', $user->id)
+                              ->select('projects.*', 'roles.nom as user_role')
+                              ->with(['taches'])
+                              ->orderBy('projects.created_at', 'desc')
+                              ->get();
+
+            // Transformer les données pour le frontend avec calculs
+            $projects = $projects->map(function ($project) {
+                // Calculer le pourcentage de tâches terminées
+                $totalTasks = $project->taches->count();
+                $completedTasks = $project->taches->where('statut', 'terminé')->count();
+                $progressPercentage = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
+
+                return [
+                    'id' => $project->id,
+                    'nom' => $project->nom,
+                    'description' => $project->description,
+                    'dateDebut' => $project->date_debut,
+                    'dateFin' => $project->date_fin,
+                    'dateCreation' => $project->created_at->toDateString(),
+                    'user_role' => $project->user_role,
+                    'progressPercentage' => $progressPercentage,
+                    'totalTasks' => $totalTasks,
+                    'completedTasks' => $completedTasks
+                ];
+            });
 
             return response()->json([
                 'success' => true,

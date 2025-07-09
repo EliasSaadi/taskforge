@@ -7,6 +7,7 @@ import { VerrouPage } from './pages/PageVerouillage'
 import { AuthProvider } from './contexts/AuthContext';
 import { DeleteProvider } from './contexts/DeleteContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { ProjectProvider } from './contexts/ProjectContext';
 import { NotificationContainer } from './components/ui';
 
 // Importe aussi tes autres pages ici
@@ -75,10 +76,12 @@ function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
-        <DeleteProvider>
-          <RouterProvider router={router} />
-          <NotificationContainer />
-        </DeleteProvider>
+        <ProjectProvider>
+          <DeleteProvider>
+            <RouterProvider router={router} />
+            <NotificationContainer />
+          </DeleteProvider>
+        </ProjectProvider>
       </NotificationProvider>
     </AuthProvider>
   )

@@ -1,2 +1,2 @@
 // Composant RoleSelect avec couleurs spécifiques pour les rôles
-export { RoleSelect, type RoleSelectProps } from './roleSelect';
+export { RoleSelect, type RoleSelectProps } from './RoleSelect';

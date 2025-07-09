@@ -19,6 +19,10 @@ export interface Projet {
   nom: string;
   dateCreation: string;
   description: string;
+  user_role?: string; // Rôle de l'utilisateur actuel dans ce projet
+  progressPercentage?: number; // Pourcentage de tâches terminées
+  totalTasks?: number; // Nombre total de tâches
+  completedTasks?: number; // Nombre de tâches terminées
 }
 
 export interface Tache {
