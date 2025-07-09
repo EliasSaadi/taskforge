@@ -448,17 +448,61 @@ export default function ComponentsDemo() {
 
               {/* Exemple de carte projet */}
               <div className="space-y-6">
-                <ProjectCard
-                  project={{
-                    id: 1,
-                    nom: 'Projet Alpha',
-                    description: 'Description du projet Alpha',
-                    dateDebut: '2027-01-01',
-                    dateFin: '2028-12-31',
-                    dateCreation: '2023-01-01',
-                  }}
-                  onProjectDeleted={(id) => console.log(`Projet ${id} supprimé`)}
-                />
+                <h3 className="text-xl font-semibold mb-4">ProjectCard - Différents rôles et statuts</h3>
+                
+                {/* Carte 1: Membre avec statut à faire */}
+                <div className="space-y-2">
+                  <h4 className="text-lg font-medium text-gray-700">Membre - Statut "à faire"</h4>
+                  <ProjectCard
+                    project={{
+                      id: 1,
+                      nom: 'Projet Alpha',
+                      description: 'Description du projet Alpha',
+                      dateDebut: '2027-01-01',
+                      dateFin: '2028-12-31',
+                      dateCreation: '2023-01-01',
+                      user_role: 'Membre',
+                      progressPercentage: 0,
+                    }}
+                    onProjectDeleted={(id) => console.log(`Projet ${id} supprimé`)}
+                  />
+                </div>
+
+                {/* Carte 2: Chef de Projet avec statut en cours */}
+                <div className="space-y-2">
+                  <h4 className="text-lg font-medium text-gray-700">Chef de Projet - Statut "en cours"</h4>
+                  <ProjectCard
+                    project={{
+                      id: 2,
+                      nom: 'Projet Beta',
+                      description: 'Développement de la nouvelle application mobile',
+                      dateDebut: '2024-06-01',
+                      dateFin: '2025-12-31',
+                      dateCreation: '2024-05-15',
+                      user_role: 'Chef de Projet',
+                      progressPercentage: 50,
+                    }}
+                    onProjectDeleted={(id) => console.log(`Projet ${id} supprimé`)}
+                  />
+                </div>
+
+                {/* Carte 3: Assistant avec statut terminé */}
+                <div className="space-y-2">
+                  <h4 className="text-lg font-medium text-gray-700">Assistant - Statut "terminé"</h4>
+                  <ProjectCard
+                    project={{
+                      id: 3,
+                      nom: 'Projet Gamma',
+                      description: 'Migration de la base de données vers le cloud',
+                      dateDebut: '2023-01-15',
+                      dateFin: '2024-03-30',
+                      dateCreation: '2023-01-01',
+                      user_role: 'Assistant',
+                      progressPercentage: 100,
+                    }}
+                    onProjectDeleted={(id) => console.log(`Projet ${id} supprimé`)}
+                  />
+                </div>
               </div>
             </section>
           </div>

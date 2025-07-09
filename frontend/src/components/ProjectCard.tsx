@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DeleteModal } from '@/components/modals/Delete';
 import { useDelete } from '@/contexts/DeleteContext';
 import { StatusSelect, LoaderSpin } from './ui';
 import type { Projet } from '@/interfaces/data';
@@ -85,6 +84,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onProjectDele
         hover:scale-[1.01] transition-all duration-300 cursor-pointer
         w-[512px] min-h-[192px] max-h-[256px]
         flex flex-col justify-between items-start
+        relative
       ">
       <div className="flex flex-col w-full gap-4">
         <div className="flex justify-between items-center w-full">
@@ -125,24 +125,86 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onProjectDele
             {roleDisplay.label}
           </span>
         </div>
-        <button 
-          onClick={() => setShowDeleteModal(true)}
-          className="bg-tf-folly p-1 rounded-sm flex items-center justify-center"
-          disabled={isThisProjectDeleting}
-        >
-          {isThisProjectDeleting ? <LoaderSpin size='lg'/> : <Trash2 size={32}/>}
-        </button>
+        {/* Bouton de suppression visible uniquement pour les chefs de projet */}
+        {project.user_role === 'Chef de Projet' && (
+          <button 
+            onClick={() => setShowDeleteModal(true)}
+            className="bg-tf-folly p-1 rounded-sm flex items-center justify-center hover:bg-red-600 transition-colors"
+            disabled={isThisProjectDeleting}
+            title="Supprimer le projet"
+          >
+            {isThisProjectDeleting ? <LoaderSpin size='lg'/> : <Trash2 size={32}/>}
+          </button>
+        )}
       </div>
 
-      {/* Modale de suppression */}
-      <DeleteModal
-        isOpen={showDeleteModal}
-        onClose={handleCloseModal}
-        onConfirm={handleDeleteProject}
-        itemType="projet"
-        itemName={project.nom}
-        isLoading={isThisProjectDeleting}
-      />
+      {/* Modale de suppression positionnée dans la carte */}
+      {showDeleteModal && (
+        <div className="absolute inset-0 bg-black bg-opacity-75 rounded-lg flex items-center justify-center z-50">
+          <div 
+            className="bg-white rounded-lg shadow-lg p-6 mx-4 max-w-sm w-full relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Bouton de fermeture */}
+            <button
+              type="button"
+              onClick={handleCloseModal}
+              disabled={isThisProjectDeleting}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 disabled:opacity-50"
+            >
+              ✕
+            </button>
+
+            {/* Contenu de la modal */}
+            <div className="text-center">
+              {/* Icône d'avertissement */}
+              <div className="mx-auto mb-4 text-red-600 w-8 h-8 flex items-center justify-center">
+                ⚠️
+              </div>
+
+              {/* Titre */}
+              <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                Supprimer le projet
+              </h3>
+
+              {/* Message */}
+              <p className="mb-3 text-sm text-gray-600">
+                Êtes-vous sûr de vouloir supprimer le projet "{project.nom}" ?
+              </p>
+
+              <p className="mb-6 text-xs text-gray-400">
+                Cette action supprimera définitivement le projet et toutes les tâches associées.
+              </p>
+
+              {/* Boutons */}
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={handleDeleteProject}
+                  disabled={isThisProjectDeleting}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isThisProjectDeleting ? (
+                    <>
+                      <LoaderSpin size="sm" />
+                      Suppression...
+                    </>
+                  ) : (
+                    'Oui, supprimer'
+                  )}
+                </button>
+                
+                <button
+                  onClick={handleCloseModal}
+                  disabled={isThisProjectDeleting}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
