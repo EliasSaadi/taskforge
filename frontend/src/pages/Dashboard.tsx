@@ -1,6 +1,6 @@
 import { Plus } from 'lucide-react';
 import { useProjects } from '@/contexts/ProjectContext';
-import { ProjectCard } from '@/components/ProjectCard';
+import { ProjectCard } from '@/components/card';
 import { LoaderSpin } from '@/components/ui';
 
 const Dashboard = () => {
