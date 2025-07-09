@@ -14,6 +14,7 @@ import { NotificationContainer } from './components/ui';
 import LayoutPublic from "@/components/layouts/LayouPublic";
 import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
+import ProjectDetail from "@/pages/ProjectDetail";
 import MonProfil from "@/pages/MonProfil";
 import { ComponentsDemo, NotificationDemo } from "@/pages/demo";
 
@@ -46,7 +47,8 @@ const router = createBrowserRouter([
       </AppGuard>
     ),
     children: [
-      { index: true, element: <Dashboard /> }
+      { index: true, element: <Dashboard /> },
+      { path: ':projectNameId', element: <ProjectDetail /> }
     ],
   },
   {

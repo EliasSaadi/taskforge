@@ -14,6 +14,7 @@ interface ProjectContextType {
   clearError: () => void;
   getProjectProgress: (project: Projet) => number;
   getProjectStatus: (project: Projet) => 'à faire' | 'en cours' | 'terminé';
+  getProjectById: (projectId: number) => Promise<Projet | null>;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -113,6 +114,37 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     }
   };
 
+  /**
+   * Récupérer un projet spécifique par ID
+   * Cherche d'abord dans la liste locale, puis via l'API si nécessaire
+   */
+  const getProjectById = async (projectId: number): Promise<Projet | null> => {
+    try {
+      // D'abord, chercher dans la liste locale
+      const localProject = projects.find(project => project.id === projectId);
+      if (localProject) {
+        return localProject;
+      }
+
+      // Si pas trouvé localement et qu'on n'est pas en train de charger, faire un appel API
+      if (!loading) {
+        console.log(`Projet ${projectId} non trouvé localement, récupération via API...`);
+        const projectFromApi = await projectService.getProject(projectId);
+        
+        // Ajouter le projet récupéré à la liste locale pour éviter les futurs appels API
+        if (projectFromApi) {
+          addProject(projectFromApi);
+          return projectFromApi;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error(`Erreur lors de la récupération du projet ${projectId}:`, error);
+      return null;
+    }
+  };
+
   // Charger les projets au montage du composant
   useEffect(() => {
     loadProjects();
@@ -128,7 +160,8 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     updateProject,
     clearError,
     getProjectProgress,
-    getProjectStatus
+    getProjectStatus,
+    getProjectById
   };
 
   return (

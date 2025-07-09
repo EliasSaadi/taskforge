@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDelete } from '@/contexts/DeleteContext';
 import { StatusSelect, LoaderSpin } from './ui';
 import type { Projet } from '@/interfaces/data';
@@ -13,6 +14,7 @@ interface ProjectCardProps {
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onProjectDeleted }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { deleteProject, isDeletingItem } = useDelete();
+  const navigate = useNavigate();
   
   // Vérifier si ce projet spécifique est en cours de suppression
   const isThisProjectDeleting = isDeletingItem('projet', project.id);
@@ -77,8 +79,26 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onProjectDele
     }
   };
 
+  // Fonction pour naviguer vers la page de détail du projet
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Empêcher la navigation si on clique sur les boutons
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    
+    // Créer un nom de projet formaté pour l'URL (slug)
+    const projectSlug = project.nom
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Supprimer les caractères spéciaux
+      .replace(/\s+/g, '_') // Remplacer les espaces par des underscores
+      .trim();
+    
+    navigate(`/dashboard/${projectSlug}_${project.id}`);
+  };
+
   return (
     <div 
+      onClick={handleCardClick}
       className="rounded-lg p-3 border-2 border-tf-battleship bg-tf-platinum
         shadow-[3px_3px_6px_rgba(0,0,0,0.25)] hover:shadow-[4px_4px_8px_rgba(0,0,0,0.3)] 
         hover:scale-[1.01] transition-all duration-300 cursor-pointer
