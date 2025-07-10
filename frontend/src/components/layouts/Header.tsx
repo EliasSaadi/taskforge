@@ -2,37 +2,18 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { LogOut, Plus, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext'; 
-import { LoaderSpin } from '@/components/ui'; 
 
 // Header.jsx
 const Header = () => {
-  const { isAuthenticated, logout, isLoggingOut } = useAuth();
+  const isAuthenticated = useAuth().isAuthenticated;
 
-  async function handleLogout(e: React.FormEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    try {
-      await logout();
-      // Rechargement complet de la page pour nettoyer l'état de Flowbite
-      window.location.href = '/';
-    } catch (err) {
-      console.error("Erreur lors de la déconnexion:", err);
-    }
-  }
+  console.log("isAuthenticated:", isAuthenticated);
   
   const [showPanel, setShowPanel] = useState(false);
   const togglePanel = () => setShowPanel(!showPanel);
 
   return (
-    <header className="flex items-center justify-between h-20 py-4 border-b-2 border-tf-davys px-8">
-      {/* LoaderSpin en plein écran pendant la déconnexion */}
-      {isLoggingOut && (
-        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
-          <LoaderSpin size="xl" />
-        </div>
-      )}
-      
+    <header className="flex items-center justify-between h-20 py-4">
       <div className="flex items-center gap-2">
         {isAuthenticated ? (
           <>
@@ -74,16 +55,15 @@ const Header = () => {
         {isAuthenticated ? (
           // Navigation pour utilisateur connecté
           <>
-            <Link 
-              to="/"
-              onClick={handleLogout}
+            <button 
+              onClick={() => alert('Déconnexion non implémentée')}
               className="bg-tf-folly px-5 py-3 tf-text-button rounded-lg 
                           hover:scale-105 duration-300 transition-transform"
               aria-label="Se déconnecter"
             >
               <LogOut className="rotate-180" />
               <span className="sr-only">Se déconnecter</span>
-            </Link>
+            </button>
             <div className="h-full p-px bg-tf-davys" role="separator"></div>
             <Link 
               to="/mon-profil"

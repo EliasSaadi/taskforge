@@ -1,8 +1,6 @@
 import { LoaderSpin, LoaderDots, Notification, StatusSelect, RoleSelect } from '@/components/ui';
 import { useNotification } from '@/contexts/NotificationContext';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 
 /**
  * Page de démonstration des composants UI (loaders, notifications, selects)
@@ -24,17 +22,6 @@ export default function UIDemo() {
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Navigation retour */}
-        <div className="mb-8">
-          <Link 
-            to="/demo" 
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
-          >
-            <ArrowLeft size={20} />
-            <span>Retour à la page démo principale</span>
-          </Link>
-        </div>
-
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">🎨 Composants UI</h1>
           <p className="text-gray-600 text-lg">

@@ -16,7 +16,7 @@ import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import ProjectDetail from "@/pages/ProjectDetail";
 import MonProfil from "@/pages/MonProfil";
-import { ComponentsDemo } from "@/pages/demo";
+import { ComponentsDemo, NotificationDemo } from "@/pages/demo";
 import { UIDemo, CardDemo, LayoutDemo, ModalDemo } from "@/pages/demo/components";
 
 
@@ -84,6 +84,10 @@ const router = createBrowserRouter([
   {
     path: '/demo/modal',
     element: <ModalDemo />
+  },
+  {
+    path: '/demo/notifications',
+    element: <NotificationDemo />
   }
 ])
 
