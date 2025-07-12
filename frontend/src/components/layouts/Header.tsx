@@ -13,7 +13,7 @@ const Header = () => {
   const togglePanel = () => setShowPanel(!showPanel);
 
   return (
-    <header className="flex items-center justify-between h-20 py-4">
+    <header className="flex items-center justify-between h-20 py-4 border-b-2 border-tf-davys px-8">
       <div className="flex items-center gap-2">
         {isAuthenticated ? (
           <>

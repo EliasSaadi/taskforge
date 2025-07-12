@@ -108,12 +108,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onProjectDele
       ">
       <div className="flex flex-col w-full gap-4">
         <div className="flex justify-between items-center w-full">
-          <div className="flex items-center gap-2">
-            <h3 className="tf-text-h3">{project.nom}</h3>
-            <div className="flex items-center gap-1">
-              {roleDisplay.icon}
-            </div>
-          </div>
+          <h3 className="tf-text-h3 line-clamp-2">{project.nom}</h3>
           <StatusSelect 
             value={projectStatus} 
             disabled={true}
@@ -130,7 +125,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onProjectDele
           {progressPercentage > 0 && (
             <div 
               className="flex items-center justify-center bg-tf-fuschia h-full tf-text-label text-tf-night rounded-s-full" 
-              style={{width: `${progressPercentage}%`, minWidth: progressPercentage > 0 ? '40px' : '0px'}}
+              style={{width: `${progressPercentage}%`, minWidth: progressPercentage > 0 ? '40px' : '0px', borderRadius: progressPercentage === 100 ? '20px' : '20px 0 0 20px'}}
             > 
               {progressPercentage}%
             </div>

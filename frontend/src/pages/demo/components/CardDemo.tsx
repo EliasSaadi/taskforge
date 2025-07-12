@@ -1,4 +1,4 @@
-import { ProjectCard } from '@/components/card';
+import { ProjectCard, MemberCard, TaskCard } from '@/components/card';
 
 /**
  * Page de démonstration des composants Card
@@ -159,7 +159,7 @@ export default function CardDemo() {
                 <div>
                   <h4 className="font-medium mb-2">Utilisation</h4>
                   <pre className="bg-gray-800 text-white p-4 rounded text-sm overflow-x-auto">
-{`import { ProjectCard } from '@/components/card';
+{`import { ProjectCard, MemberCard, TaskCard } from '@/components/card';
 
 <ProjectCard 
   project={projectData}
@@ -180,6 +180,181 @@ export default function CardDemo() {
                   <li><strong>Modal :</strong> Confirmation de suppression intégrée</li>
                   <li><strong>Responsive :</strong> Taille fixe optimisée pour grille de cartes</li>
                 </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* Section MemberCard */}
+          <section className="space-y-4">
+            <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">👤 MemberCard</h2>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-2xl font-semibold mb-4">MemberCard - Membres du projet</h3>
+              <p className="text-gray-600 mb-6">
+                Carte de membre avec statistiques des tâches assignées et progression
+              </p>
+              
+              <div className="space-y-6">
+                {/* Membre 1: Chef de projet */}
+                <div className="space-y-3">
+                  <h4 className="text-lg font-medium text-gray-700">Chef de Projet - Très actif</h4>
+                  <div className="flex justify-center">
+                    <MemberCard
+                      member={{
+                        id: 1,
+                        prenom: 'Jean',
+                        nom: 'Dupont',
+                        email: 'jean.dupont@example.com',
+                        role: 'Chef de Projet',
+                        tasksStats: {
+                          total: 12,
+                          completed: 8,
+                          inProgress: 3,
+                          todo: 1
+                        }
+                      }}
+                      onMemberClick={(id) => console.log(`Membre ${id} cliqué`)}
+                    />
+                  </div>
+                </div>
+
+                {/* Membre 2: Assistant */}
+                <div className="space-y-3">
+                  <h4 className="text-lg font-medium text-gray-700">Assistant - Progression moyenne</h4>
+                  <div className="flex justify-center">
+                    <MemberCard
+                      member={{
+                        id: 2,
+                        prenom: 'Marie',
+                        nom: 'Martin',
+                        email: 'marie.martin@example.com',
+                        role: 'Assistant',
+                        tasksStats: {
+                          total: 8,
+                          completed: 3,
+                          inProgress: 4,
+                          todo: 1
+                        }
+                      }}
+                      onMemberClick={(id) => console.log(`Membre ${id} cliqué`)}
+                    />
+                  </div>
+                </div>
+
+                {/* Membre 3: Membre simple */}
+                <div className="space-y-3">
+                  <h4 className="text-lg font-medium text-gray-700">Membre - Début de projet</h4>
+                  <div className="flex justify-center">
+                    <MemberCard
+                      member={{
+                        id: 3,
+                        prenom: 'Pierre',
+                        nom: 'Bernard',
+                        email: 'pierre.bernard@example.com',
+                        role: 'Membre',
+                        tasksStats: {
+                          total: 5,
+                          completed: 0,
+                          inProgress: 2,
+                          todo: 3
+                        }
+                      }}
+                      onMemberClick={(id) => console.log(`Membre ${id} cliqué`)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section TaskCard */}
+          <section className="space-y-4">
+            <h2 className="text-3xl font-bold border-b-2 border-gray-200 pb-2">📝 TaskCard</h2>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-2xl font-semibold mb-4">TaskCard - Tâches du projet</h3>
+              <p className="text-gray-600 mb-6">
+                Carte de tâche avec assignation, statut, actions et gestion des permissions
+              </p>
+              
+              <div className="space-y-6">
+                {/* Tâche 1: Urgente */}
+                <div className="space-y-3">
+                  <h4 className="text-lg font-medium text-gray-700">Tâche urgente - Date limite proche</h4>
+                  <div className="flex justify-center">
+                    <TaskCard
+                      task={{
+                        id: 1,
+                        titre: 'Finaliser le design de l\'interface utilisateur',
+                        description: 'Compléter tous les écrans de l\'application selon les maquettes approuvées par le client',
+                        statut: 'en cours',
+                        dateLimite: '2025-07-15',
+                        assignedUsers: [
+                          { id: 1, prenom: 'Jean', nom: 'Dupont' },
+                          { id: 2, prenom: 'Marie', nom: 'Martin' }
+                        ]
+                      }}
+                      userRole="Chef de Projet"
+                      isAssignedToUser={true}
+                      onTaskStatusChange={(id, status) => console.log(`Tâche ${id} changée vers ${status}`)}
+                      onTaskView={(id) => console.log(`Voir tâche ${id}`)}
+                      onTaskEdit={(id) => console.log(`Modifier tâche ${id}`)}
+                      onTaskDelete={(id) => console.log(`Supprimer tâche ${id}`)}
+                    />
+                  </div>
+                </div>
+
+                {/* Tâche 2: Normale */}
+                <div className="space-y-3">
+                  <h4 className="text-lg font-medium text-gray-700">Tâche normale - Membre simple</h4>
+                  <div className="flex justify-center">
+                    <TaskCard
+                      task={{
+                        id: 2,
+                        titre: 'Rédiger la documentation technique',
+                        description: 'Documenter les API et les processus de déploiement pour faciliter la maintenance',
+                        statut: 'à faire',
+                        dateLimite: '2025-08-30',
+                        assignedUsers: [
+                          { id: 3, prenom: 'Pierre', nom: 'Bernard' }
+                        ]
+                      }}
+                      userRole="Membre"
+                      isAssignedToUser={true}
+                      onTaskStatusChange={(id, status) => console.log(`Tâche ${id} changée vers ${status}`)}
+                      onTaskView={(id) => console.log(`Voir tâche ${id}`)}
+                      onTaskEdit={(id) => console.log(`Modifier tâche ${id}`)}
+                      onTaskDelete={(id) => console.log(`Supprimer tâche ${id}`)}
+                    />
+                  </div>
+                </div>
+
+                {/* Tâche 3: Terminée */}
+                <div className="space-y-3">
+                  <h4 className="text-lg font-medium text-gray-700">Tâche terminée - Assignation multiple</h4>
+                  <div className="flex justify-center">
+                    <TaskCard
+                      task={{
+                        id: 3,
+                        titre: 'Mettre en place l\'authentification',
+                        description: 'Implémenter le système de connexion avec JWT et protection des routes',
+                        statut: 'terminé',
+                        dateLimite: '2025-06-30',
+                        assignedUsers: [
+                          { id: 1, prenom: 'Jean', nom: 'Dupont' },
+                          { id: 2, prenom: 'Marie', nom: 'Martin' },
+                          { id: 4, prenom: 'Sophie', nom: 'Dubois' }
+                        ]
+                      }}
+                      userRole="Assistant"
+                      isAssignedToUser={false}
+                      onTaskStatusChange={(id, status) => console.log(`Tâche ${id} changée vers ${status}`)}
+                      onTaskView={(id) => console.log(`Voir tâche ${id}`)}
+                      onTaskEdit={(id) => console.log(`Modifier tâche ${id}`)}
+                      onTaskDelete={(id) => console.log(`Supprimer tâche ${id}`)}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </section>

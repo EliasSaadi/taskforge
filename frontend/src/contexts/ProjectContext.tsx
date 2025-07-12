@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { projectService } from '@/services/projectService';
+import { useAuth } from '@/contexts/AuthContext';
 import type { Projet } from '@/interfaces/data';
 
 interface ProjectContextType {
@@ -27,6 +28,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
   const [projects, setProjects] = useState<Projet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   /**
    * Charger les projets de l'utilisateur
@@ -145,10 +147,19 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     }
   };
 
-  // Charger les projets au montage du composant
+  // Charger les projets au montage du composant, seulement si authentifié
   useEffect(() => {
-    loadProjects();
-  }, []);
+    // Ne charger les projets que si l'utilisateur est authentifié
+    // et que l'AuthContext a fini son loading initial
+    if (!authLoading && isAuthenticated) {
+      loadProjects();
+    } else if (!authLoading && !isAuthenticated) {
+      // Si pas authentifié, réinitialiser l'état
+      setProjects([]);
+      setLoading(false);
+      setError(null);
+    }
+  }, [isAuthenticated, authLoading]);
 
   const value: ProjectContextType = {
     projects,

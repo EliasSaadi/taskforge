@@ -11,12 +11,12 @@ import { ProjectProvider } from './contexts/ProjectContext';
 import { NotificationContainer } from './components/ui';
 
 // Importe aussi tes autres pages ici
-import { LayoutPublic } from "@/components/layouts";
+import LayoutPublic from "@/components/layouts/LayouPublic";
 import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import ProjectDetail from "@/pages/ProjectDetail";
 import MonProfil from "@/pages/MonProfil";
-import { ComponentsDemo, NotificationDemo } from "@/pages/demo";
+import { ComponentsDemo } from "@/pages/demo";
 import { UIDemo, CardDemo, LayoutDemo, ModalDemo } from "@/pages/demo/components";
 
 
@@ -84,10 +84,6 @@ const router = createBrowserRouter([
   {
     path: '/demo/modal',
     element: <ModalDemo />
-  },
-  {
-    path: '/demo/notifications',
-    element: <NotificationDemo />
   }
 ])
 

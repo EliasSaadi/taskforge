@@ -58,3 +58,41 @@ export interface Assigner {
   id_utilisateur: number;
   id_tache: number;
 }
+
+// Interfaces pour les composants Card
+export interface MembreProjet {
+  id: number;
+  prenom: string;
+  nom: string;
+  email: string;
+  role: 'Chef de Projet' | 'Assistant' | 'Membre';
+  tasksStats: {
+    total: number;
+    completed: number;
+    inProgress: number;
+    todo: number;
+  };
+}
+
+export interface TacheComplete {
+  id: number;
+  titre: string;
+  description: string;
+  statut: 'à faire' | 'en cours' | 'terminé';
+  dateLimite: string;
+  dateDebut: string;
+  id_projet: number;
+  assignedUsers: Array<{
+    id: number;
+    prenom: string;
+    nom: string;
+  }>;
+}
+
+// Types pour les statistiques
+export interface TaskStats {
+  total: number;
+  completed: number;
+  inProgress: number;
+  todo: number;
+}
