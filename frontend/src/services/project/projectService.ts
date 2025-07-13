@@ -1,5 +1,5 @@
 import api from '../api';
-import type { Projet, ProjetComplet } from '@/interfaces';
+import type { Projet } from '@/interfaces';
 
 /**
  * Service pour la gestion des projets
@@ -28,19 +28,6 @@ export const projectService = {
       return response.data?.data || response.data;
     } catch (error) {
       console.error(`Erreur lors de la récupération du projet ${id}:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * Récupérer un projet complet avec toutes ses données (membres, tâches, messages)
-   */
-  getProjectComplete: async (id: number): Promise<ProjetComplet> => {
-    try {
-      const response = await api.get(`/api/projects/${id}/complete`);
-      return response.data?.data || response.data;
-    } catch (error) {
-      console.error(`Erreur lors de la récupération complète du projet ${id}:`, error);
       throw error;
     }
   },

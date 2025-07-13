@@ -44,7 +44,7 @@ Cette architecture modulaire sépare les responsabilités entre différents cont
 - **`memberService`** - API pour les membres
 - **`taskService`** - API pour les tâches  
 - **`messageService`** - API pour les messages
-- **`projectService`** - API pour les projets (enrichi avec `getProjectComplete`)
+- **`projectService`** - API pour les projets
 
 ## Utilisation
 
@@ -118,11 +118,10 @@ App
 
 ## Backend requis
 
-L'architecture nécessite ces endpoints :
+L'architecture utilise ces endpoints :
 
 - `GET /api/projects/{id}/members` - Membres d'un projet
 - `GET /api/projects/{id}/tasks` - Tâches d'un projet
 - `GET /api/projects/{id}/messages` - Messages d'un projet
-- `GET /api/projects/{id}/complete` - Toutes les données (optimisé)
 
-Si l'endpoint `/complete` n'est pas disponible, le système utilise automatiquement les endpoints séparés.
+Le système charge toutes les données en parallèle pour optimiser les performances.

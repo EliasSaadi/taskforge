@@ -83,48 +83,40 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     try {
       setError(null);
       
-      // Essayer d'utiliser l'endpoint optimisé
-      try {
-        const completeProject = await projectService.getProjectComplete(projectId);
-        return completeProject;
-      } catch (completeError) {
-        console.log('Endpoint complet non disponible, chargement séparé...');
-        
-        // Fallback: charger les données séparément
-        const project = await getProjectById(projectId);
-        if (!project) {
-          throw new Error('Projet non trouvé');
-        }
-        
-        // Charger toutes les données en parallèle
-        await Promise.all([
-          loadMembers(projectId),
-          loadTasks(projectId),
-          loadMessages(projectId)
-        ]);
-        
-        // Calculer les statistiques
-        const taskStats = getTaskStats();
-        const stats: ProjectStats = {
-          totalTasks: taskStats.total,
-          completedTasks: taskStats.completed,
-          inProgressTasks: taskStats.inProgress,
-          todoTasks: taskStats.todo,
-          totalMembers: members.length,
-          progressPercentage: taskStats.total > 0 ? (taskStats.completed / taskStats.total) * 100 : 0,
-          daysRemaining: Math.ceil((new Date(project.dateFin).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
-          isOverdue: new Date() > new Date(project.dateFin)
-        };
-        
-        // Construire l'objet ProjetComplet
-        return {
-          ...project,
-          membres: members,
-          taches: tasks,
-          messages: messages,
-          stats
-        };
+      // Récupérer le projet de base
+      const project = await getProjectById(projectId);
+      if (!project) {
+        throw new Error('Projet non trouvé');
       }
+      
+      // Charger toutes les données en parallèle
+      await Promise.all([
+        loadMembers(projectId),
+        loadTasks(projectId),
+        loadMessages(projectId)
+      ]);
+      
+      // Calculer les statistiques
+      const taskStats = getTaskStats();
+      const stats: ProjectStats = {
+        totalTasks: taskStats.total,
+        completedTasks: taskStats.completed,
+        inProgressTasks: taskStats.inProgress,
+        todoTasks: taskStats.todo,
+        totalMembers: members.length,
+        progressPercentage: taskStats.total > 0 ? (taskStats.completed / taskStats.total) * 100 : 0,
+        daysRemaining: Math.ceil((new Date(project.dateFin).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
+        isOverdue: new Date() > new Date(project.dateFin)
+      };
+      
+      // Construire l'objet ProjetComplet
+      return {
+        ...project,
+        membres: members,
+        taches: tasks,
+        messages: messages,
+        stats
+      };
     } catch (err: any) {
       const message = err.response?.data?.message || 'Erreur lors du chargement complet du projet';
       setError(message);
