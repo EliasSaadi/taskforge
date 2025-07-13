@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Utilisateur } from "./data"
+import type { Utilisateur } from "./user"
 
 export interface AuthContextType {
   user: Utilisateur | null

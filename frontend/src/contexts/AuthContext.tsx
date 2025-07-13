@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "@/services/api";
-import type {Utilisateur} from "@/interfaces/data";
+import type { Utilisateur } from "@/interfaces";
 
 export type User = Utilisateur
 

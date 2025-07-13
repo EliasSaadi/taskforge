@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDelete } from '@/contexts/DeleteContext';
 import { StatusSelect, LoaderSpin } from '@/components/ui';
-import type { Projet } from '@/interfaces/data';
+import type { Projet } from '@/interfaces';
 import { Trash2, ArrowRight, Crown, Users, User } from 'lucide-react';
 
 interface ProjectCardProps {

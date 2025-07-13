@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { projectService } from '@/services/projectService';
 import { useAuth } from '@/contexts/AuthContext';
-import type { Projet } from '@/interfaces/data';
+import type { Projet } from '@/interfaces';
 
 interface ProjectContextType {
   projects: Projet[];

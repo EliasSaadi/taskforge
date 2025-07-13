@@ -1,5 +1,5 @@
 import api from './api';
-import type { Projet } from '@/interfaces/data';
+import type { Projet } from '@/interfaces';
 
 /**
  * Service pour la gestion des projets

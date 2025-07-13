@@ -6,8 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 // Header.jsx
 const Header = () => {
   const isAuthenticated = useAuth().isAuthenticated;
-
-  console.log("isAuthenticated:", isAuthenticated);
   
   const [showPanel, setShowPanel] = useState(false);
   const togglePanel = () => setShowPanel(!showPanel);
