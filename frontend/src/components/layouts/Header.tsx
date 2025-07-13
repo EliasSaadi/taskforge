@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { LogOut, Plus, PanelLeftClose, PanelRightClose } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext'; 
+import { useAuth } from '@/contexts/core/AuthContext'; 
 
 // Header.jsx
 const Header = () => {

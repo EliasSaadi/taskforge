@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Edit, Trash2, ScanEye } from 'lucide-react';
 import { StatusSelect, LoaderDots } from '@/components/ui';
-import { useDelete } from '@/contexts/DeleteContext';
+import { useDelete } from '@/contexts/core/DeleteContext';
 
 interface TaskCardProps {
   task: {

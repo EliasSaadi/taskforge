@@ -557,4 +557,141 @@ class ProjectController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Récupérer un projet complet avec toutes ses données (membres, tâches, messages)
+     * 
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function complete(string $id): JsonResponse
+    {
+        try {
+            $project = Project::findOrFail($id);
+
+            // Vérifier si l'utilisateur est membre du projet
+            if (!$this->isMembreProjet($project)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Accès non autorisé à ce projet'
+                ], 403);
+            }
+
+            // Récupérer les membres avec leurs rôles et statistiques
+            $members = $project->membres()
+                ->get()
+                ->map(function($user) use ($project) {
+                    // Récupérer le rôle de l'utilisateur dans ce projet
+                    $pivotData = $project->membres()
+                        ->where('user_id', $user->id)
+                        ->first();
+                    
+                    $role = null;
+                    if ($pivotData && $pivotData->pivot->role_id) {
+                        $role = Role::find($pivotData->pivot->role_id);
+                    }
+                    
+                    $roleName = $role ? $role->nom : 'Membre';
+
+                    // Calculer les statistiques des tâches de l'utilisateur
+                    $userTasks = $project->taches()
+                        ->whereHas('utilisateurs', function($query) use ($user) {
+                            $query->where('user_id', $user->id);
+                        })
+                        ->get();
+
+                    $taskStats = [
+                        'total' => $userTasks->count(),
+                        'completed' => $userTasks->where('statut', 'terminé')->count(),
+                        'inProgress' => $userTasks->where('statut', 'en cours')->count(),
+                        'todo' => $userTasks->where('statut', 'à faire')->count(),
+                    ];
+
+                    return [
+                        'id' => $user->id,
+                        'prenom' => $user->prenom,
+                        'nom' => $user->nom,
+                        'email' => $user->email,
+                        'role' => $roleName,
+                        'tasksStats' => $taskStats
+                    ];
+                });
+
+            // Récupérer les tâches avec les utilisateurs assignés
+            $tasks = $project->taches()
+                ->with(['utilisateurs:id,prenom,nom'])
+                ->get()
+                ->map(function($task) {
+                    return [
+                        'id' => $task->id,
+                        'titre' => $task->titre,
+                        'description' => $task->description,
+                        'statut' => $task->statut,
+                        'dateLimite' => $task->date_limite,
+                        'dateDebut' => $task->date_debut,
+                        'id_projet' => $task->project_id,
+                        'assignedUsers' => $task->utilisateurs->map(function($user) {
+                            return [
+                                'id' => $user->id,
+                                'prenom' => $user->prenom,
+                                'nom' => $user->nom
+                            ];
+                        })
+                    ];
+                });
+
+            // Récupérer les messages (si la relation existe)
+            $messages = collect([]); // TODO: Implémenter quand la relation sera créée
+
+            // Calculer les statistiques globales
+            $totalTasks = $tasks->count();
+            $completedTasks = $tasks->where('statut', 'terminé')->count();
+            $inProgressTasks = $tasks->where('statut', 'en cours')->count();
+            $todoTasks = $tasks->where('statut', 'à faire')->count();
+            
+            $stats = [
+                'totalTasks' => $totalTasks,
+                'completedTasks' => $completedTasks,
+                'inProgressTasks' => $inProgressTasks,
+                'todoTasks' => $todoTasks,
+                'totalMembers' => $members->count(),
+                'progressPercentage' => $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 2) : 0,
+                'daysRemaining' => max(0, ceil((strtotime($project->date_fin) - time()) / (60 * 60 * 24))),
+                'isOverdue' => time() > strtotime($project->date_fin)
+            ];
+
+            // Construire la réponse complète
+            $completeProject = [
+                'id' => $project->id,
+                'nom' => $project->nom,
+                'description' => $project->description,
+                'dateDebut' => $project->date_debut,
+                'dateFin' => $project->date_fin,
+                'dateCreation' => $project->created_at,
+                'membres' => $members,
+                'taches' => $tasks,
+                'messages' => $messages,
+                'stats' => $stats
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Projet complet récupéré avec succès',
+                'data' => $completeProject
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Projet non trouvé'
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération complète du projet',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

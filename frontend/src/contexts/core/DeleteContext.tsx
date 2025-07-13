@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import { DeleteService } from '@/services/deleteService';
-import { useNotification } from '@/contexts/NotificationContext';
+import { DeleteService } from '@/services/core/deleteService';
+import { useNotification } from './NotificationContext';
 
 interface DeleteContextType {
   /** État de chargement global pour les suppressions */

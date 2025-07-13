@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { useProjects } from '@/contexts/ProjectContext';
+import { useProjects } from '@/contexts/project/ProjectContext';
 import { ProjectCard } from '@/components/card';
 import { LoaderSpin } from '@/components/ui';
 

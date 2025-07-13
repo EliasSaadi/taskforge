@@ -1,6 +1,6 @@
 import { X, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/core/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { LoaderDots, LoaderSpin } from "../ui";
 

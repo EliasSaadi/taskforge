@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useProjects } from '@/contexts/ProjectContext';
+import { useProjects } from '@/contexts/project/ProjectContext';
 import { LoaderSpin, StatusSelect } from '@/components/ui';
-import type { Projet } from '@/interfaces/data';
+import type { Projet } from '@/interfaces';
 import { ArrowLeft, Calendar, Crown, Users, User, Clock, Target } from 'lucide-react';
 
 export const ProjectDetail: React.FC = () => {

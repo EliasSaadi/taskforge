@@ -9,17 +9,17 @@ export interface RoleSelectProps {
 const roleConfig = {
   'Chef de Projet': {
     label: 'Chef de Projet',
-    bgColor: 'bg-tf-erin', // Erin (vert)
+    bgColor: 'bg-tf-fuschia',
     textColor: 'text-tf-night'
   },
   'Assistant': {
     label: 'Assistant',
-    bgColor: 'bg-tf-saffron', // Saffron (jaune)
+    bgColor: 'bg-tf-erin',
     textColor: 'text-tf-night'
   },
   'Membre': {
     label: 'Membre',
-    bgColor: 'bg-tf-battleship', // Battleship (gris)
+    bgColor: 'bg-tf-battleship',
     textColor: 'text-tf-night'
   }
 };

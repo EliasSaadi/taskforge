@@ -1,5 +1,5 @@
 import { LoaderSpin, LoaderDots, Notification, StatusSelect, RoleSelect } from '@/components/ui';
-import { useNotification } from '@/contexts/NotificationContext';
+import { useNotification } from '@/contexts/core/NotificationContext';
 import { useState } from 'react';
 
 /**
@@ -223,7 +223,7 @@ export default function UIDemo() {
                       value={roleValue1}
                       onChange={setRoleValue1}
                     />
-                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">Erin (vert)</code>
+                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">Fuschia (violet)</code>
                   </div>
                   <div className="flex flex-col items-center gap-3">
                     <span className="text-sm font-medium">Assistant (modifiable)</span>
@@ -231,7 +231,7 @@ export default function UIDemo() {
                       value={roleValue2}
                       onChange={setRoleValue2}
                     />
-                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">Saffron (jaune)</code>
+                    <code className="text-xs bg-gray-200 px-2 py-1 rounded">Erin (vert)</code>
                   </div>
                   <div className="flex flex-col items-center gap-3">
                     <span className="text-sm font-medium">Membre (modifiable)</span>

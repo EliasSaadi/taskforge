@@ -1,7 +1,7 @@
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/core/AuthContext';
 import { formatDate } from '@/lib/utils/dateUtils';
 import { DeleteModal } from '@/components/modals/Delete';
-import { useDelete } from '@/contexts/DeleteContext';
+import { useDelete } from '@/contexts/core/DeleteContext';
 import { LoaderSpin } from '@/components/ui';
 import { useState } from 'react';
 
