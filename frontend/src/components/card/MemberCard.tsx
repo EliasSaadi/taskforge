@@ -7,8 +7,8 @@ interface MemberCardProps {
     prenom: string;
     nom: string;
     email: string;
-    role: 'Chef de Projet' | 'Assistant' | 'Membre';
-    tasksStats: {
+    role: string;
+    tasksStats?: {
       total: number;
       completed: number;
       inProgress: number;
@@ -52,9 +52,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({
 
   const roleDisplay = getRoleDisplay(member.role);
 
-  // Calculer le pourcentage de progression
-  const progressPercentage = member.tasksStats.total > 0 
-    ? Math.round((member.tasksStats.completed / member.tasksStats.total) * 100)
+  // Calculer le pourcentage de progression avec gestion de l'absence de tasksStats
+  const tasksStats = member.tasksStats || { total: 0, completed: 0, inProgress: 0, todo: 0 };
+  const progressPercentage = tasksStats.total > 0 
+    ? Math.round((tasksStats.completed / tasksStats.total) * 100)
     : 0;
 
   const handleCardClick = () => {
@@ -65,82 +66,77 @@ export const MemberCard: React.FC<MemberCardProps> = ({
 
   return (
     <div 
+      className="bg-tf-silver border border-tf-night rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
       onClick={handleCardClick}
-      className={`rounded-lg p-4 border-2 border-tf-battleship bg-tf-platinum
-        shadow-[3px_3px_6px_rgba(0,0,0,0.25)] hover:shadow-[4px_4px_8px_rgba(0,0,0,0.3)] 
-        hover:scale-[1.02] transition-all duration-300 
-        w-[320px] min-h-[180px]
-        flex flex-col justify-between
-        relative ${onMemberClick ? 'cursor-pointer' : ''}
-      `}
     >
-      {/* Header avec nom et rôle */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className={`w-12 h-12 rounded-full ${roleDisplay.color} flex items-center justify-center`}>
-            <User size={20} />
-          </div>
-          <div>
-            <h3 className="tf-text-h4 text-tf-night font-semibold">
-              {member.prenom} {member.nom}
-            </h3>
-            <p className="tf-text-small text-tf-battleship">
-              {member.email}
-            </p>
-          </div>
+      {/* Header avec avatar et nom */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-12 h-12 bg-tf-night rounded-full flex items-center justify-center">
+          <User className="text-white" size={24} />
         </div>
-        <div className={`px-3 py-1 rounded-full text-xs font-medium min-w-max ${roleDisplay.color}`}>
-          {roleDisplay.label}
+        <div className="flex-1">
+          <h3 className="font-semibold text-tf-night">
+            {member.prenom} {member.nom}
+          </h3>
+          <p className="text-sm text-tf-battleship">
+            {member.email}
+          </p>
         </div>
       </div>
 
-      {/* Statistiques des tâches */}
+      {/* Badge de rôle */}
+      <div className="mb-4">
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${roleDisplay.color}`}>
+          {roleDisplay.label}
+        </span>
+      </div>
+
+      {/* Section statistiques des tâches */}
       <div className="space-y-3">
+        {/* Total des tâches */}
         <div className="flex items-center justify-between">
-          <span className="tf-text-base text-tf-night">
+          <span className="text-base text-tf-night">
             Tâches assignées
           </span>
-          <span className="tf-text-base font-semibold text-tf-night">
-            {member.tasksStats.total}
+          <span className="text-base font-semibold text-tf-night">
+            {tasksStats.total}
           </span>
         </div>
 
         {/* Barre de progression */}
         <div className="w-full h-2 bg-white rounded-full border border-tf-night">
-          {progressPercentage > 0 && (
-            <div 
-              className="bg-tf-fuschia h-full rounded-full transition-all duration-300" 
-              style={{ width: `${progressPercentage}%` }}
-            />
-          )}
+          <div 
+            className="h-full bg-gradient-to-r from-tf-fuschia to-tf-erin rounded-full transition-all duration-300"
+            style={{ width: `${progressPercentage}%` }}
+          />
         </div>
 
-        {/* Répartition des tâches */}
+        {/* Détail des statistiques */}
         <div className="grid grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-1">
             <CheckCircle size={12} className="text-green-600" />
             <span className="text-tf-night">
-              {member.tasksStats.completed} terminées
+              {tasksStats.completed} terminées
             </span>
           </div>
           <div className="flex items-center gap-1">
             <Clock size={12} className="text-orange-600" />
             <span className="text-tf-night">
-              {member.tasksStats.inProgress} en cours
+              {tasksStats.inProgress} en cours
             </span>
           </div>
           <div className="flex items-center gap-1">
             <Circle size={12} className="text-gray-600" />
             <span className="text-tf-night">
-              {member.tasksStats.todo} à faire
+              {tasksStats.todo} à faire
             </span>
           </div>
         </div>
 
         {/* Pourcentage de progression */}
-        <div className="text-center">
-          <span className="tf-text-small font-medium text-tf-battleship">
-            {progressPercentage}% de progression
+        <div className="text-right">
+          <span className={`text-sm font-medium ${roleDisplay.textColor}`}>
+            {progressPercentage}% complété
           </span>
         </div>
       </div>

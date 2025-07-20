@@ -694,4 +694,123 @@ class ProjectController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Récupérer les membres d'un projet
+     * 
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function members(string $id): JsonResponse
+    {
+        try {
+            $project = Project::findOrFail($id);
+            
+            // Vérifier que l'utilisateur a accès au projet
+            if (!$this->isMembreProjet($project)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Accès non autorisé'
+                ], 403);
+            }
+
+            // Récupérer les membres avec leurs rôles
+            $members = $project->membres()
+                              ->withPivot('role_id')
+                              ->get()
+                              ->map(function ($user) {
+                                  // Récupérer le rôle depuis la table pivot
+                                  $role = \App\Models\Role::find($user->pivot->role_id);
+                                  return [
+                                      'id' => $user->id,
+                                      'nom' => $user->nom,
+                                      'prenom' => $user->prenom,
+                                      'email' => $user->email,
+                                      'role' => $role ? $role->nom : null,
+                                      'avatar' => $user->avatar ?? null
+                                  ];
+                              });
+
+            return response()->json([
+                'success' => true,
+                'data' => $members
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Projet non trouvé'
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des membres',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Récupérer les tâches d'un projet
+     * 
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function tasks(string $id): JsonResponse
+    {
+        try {
+            $project = Project::findOrFail($id);
+            
+            // Vérifier que l'utilisateur a accès au projet
+            if (!$this->isMembreProjet($project)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Accès non autorisé'
+                ], 403);
+            }
+
+            // Récupérer les tâches avec leurs assignations
+            $tasks = $project->taches()
+                            ->with(['utilisateurs'])
+                            ->get()
+                            ->map(function ($task) {
+                                return [
+                                    'id' => $task->id,
+                                    'nom' => $task->titre, // Le champ s'appelle 'titre' dans la base
+                                    'description' => $task->description,
+                                    'statut' => $task->statut,
+                                    'priorite' => $task->priorite ?? 'moyenne', // Valeur par défaut
+                                    'dateDebut' => $task->date_debut,
+                                    'dateFin' => $task->date_limite, // Le champ s'appelle 'date_limite'
+                                    'assignedUsers' => $task->utilisateurs->map(function ($user) {
+                                        return [
+                                            'id' => $user->id,
+                                            'nom' => $user->nom,
+                                            'prenom' => $user->prenom,
+                                            'email' => $user->email
+                                        ];
+                                    })
+                                ];
+                            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $tasks
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Projet non trouvé'
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des tâches',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

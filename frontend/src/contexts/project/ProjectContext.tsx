@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { projectService } from '@/services/project/projectService';
+import { memberService } from '@/services/project/memberService';
+import { taskService } from '@/services/project/taskService';
+import { messageService } from '@/services/project/messageService';
 import { useAuth } from '@/contexts/core/AuthContext';
-import { useMembers } from './MemberContext';
-import { useTasks } from './TaskContext';
-import { useMessages } from './MessageContext';
 import type { Projet, ProjetComplet, ProjectStats } from '@/interfaces';
 
 interface ProjectContextType {
@@ -35,10 +35,8 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
   const [error, setError] = useState<string | null>(null);
   const { isAuthenticated, loading: authLoading } = useAuth();
   
-  // Utilisation des contexts spécialisés
-  const { members, loadMembers } = useMembers();
-  const { tasks, loadTasks, getTaskStats } = useTasks();
-  const { messages, loadMessages } = useMessages();
+  // Pour getProjectStats, nous utiliserons une approche simple
+  // puisque nous n'avons plus accès aux contexts de données
 
   /**
    * Charger les projets de l'utilisateur
@@ -89,32 +87,50 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
         throw new Error('Projet non trouvé');
       }
       
-      // Charger toutes les données en parallèle
-      await Promise.all([
-        loadMembers(projectId),
-        loadTasks(projectId),
-        loadMessages(projectId)
+      // Charger toutes les données en parallèle directement depuis les services
+      const [membersResult, tasksResult, messagesResult] = await Promise.allSettled([
+        memberService.getProjectMembers(projectId).catch(err => {
+          console.warn('Erreur lors du chargement des membres:', err);
+          return [];
+        }),
+        taskService.getProjectTasks(projectId).catch(err => {
+          console.warn('Erreur lors du chargement des tâches:', err);
+          return [];
+        }),
+        messageService.getProjectMessages(projectId).catch(err => {
+          console.warn('Erreur lors du chargement des messages:', err);
+          return [];
+        })
       ]);
       
-      // Calculer les statistiques
-      const taskStats = getTaskStats();
+      // Extraire les données des résultats
+      const projectMembers = membersResult.status === 'fulfilled' ? membersResult.value : [];
+      const projectTasks = tasksResult.status === 'fulfilled' ? tasksResult.value : [];
+      const projectMessages = messagesResult.status === 'fulfilled' ? messagesResult.value : [];
+      
+      // Calculer les statistiques avec les données chargées
+      const totalTasks = projectTasks.length;
+      const completedTasks = projectTasks.filter(t => t.statut === 'terminé').length;
+      const inProgressTasks = projectTasks.filter(t => t.statut === 'en cours').length;
+      const todoTasks = projectTasks.filter(t => t.statut === 'à faire').length;
+      
       const stats: ProjectStats = {
-        totalTasks: taskStats.total,
-        completedTasks: taskStats.completed,
-        inProgressTasks: taskStats.inProgress,
-        todoTasks: taskStats.todo,
-        totalMembers: members.length,
-        progressPercentage: taskStats.total > 0 ? (taskStats.completed / taskStats.total) * 100 : 0,
+        totalTasks,
+        completedTasks,
+        inProgressTasks,
+        todoTasks,
+        totalMembers: projectMembers.length,
+        progressPercentage: totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0,
         daysRemaining: Math.ceil((new Date(project.dateFin).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)),
         isOverdue: new Date() > new Date(project.dateFin)
       };
       
-      // Construire l'objet ProjetComplet
+      // Construire l'objet ProjetComplet avec les vraies données
       return {
         ...project,
-        membres: members,
-        taches: tasks,
-        messages: messages,
+        membres: projectMembers,
+        taches: projectTasks,
+        messages: projectMessages,
         stats
       };
     } catch (err: any) {
@@ -122,33 +138,33 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
       setError(message);
       throw err;
     }
-  }, [getProjectById, loadMembers, loadTasks, loadMessages, members, tasks, messages, getTaskStats]);
+  }, [getProjectById]);
 
   /**
    * Obtenir les statistiques d'un projet
+   * Note: Cette fonction est simplifiée car nous n'avons plus accès aux contexts
    */
   const getProjectStats = useCallback((projectId: number): ProjectStats => {
-    const taskStats = getTaskStats();
     const project = projects.find(p => p.id === projectId);
     
     return {
-      totalTasks: taskStats.total,
-      completedTasks: taskStats.completed,
-      inProgressTasks: taskStats.inProgress,
-      todoTasks: taskStats.todo,
-      totalMembers: members.length,
-      progressPercentage: taskStats.total > 0 ? (taskStats.completed / taskStats.total) * 100 : 0,
+      totalTasks: 0,
+      completedTasks: 0,
+      inProgressTasks: 0,
+      todoTasks: 0,
+      totalMembers: 0,
+      progressPercentage: 0,
       daysRemaining: project ? Math.ceil((new Date(project.dateFin).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0,
       isOverdue: project ? new Date() > new Date(project.dateFin) : false
     };
-  }, [getTaskStats, members, projects]);
+  }, [projects]);
 
   /**
    * Recharger les projets
    */
   const refreshProjects = useCallback(() => {
     loadProjects();
-  }, [loadProjects]);
+  }, []);
 
   /**
    * Ajouter un projet à la liste locale
@@ -208,7 +224,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     if (isAuthenticated && !authLoading) {
       loadProjects();
     }
-  }, [isAuthenticated, authLoading, loadProjects]);
+  }, [isAuthenticated, authLoading]);
 
   return (
     <ProjectContext.Provider value={{

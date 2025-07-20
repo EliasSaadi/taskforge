@@ -58,7 +58,6 @@ export const DeleteProvider: React.FC<DeleteProviderProps> = ({ children }) => {
 
     try {
       await deleteFunction();
-      console.log(`${type} ${id ? `(ID: ${id})` : ''} supprimé avec succès`);
       
       // Afficher une notification de succès
       if (type === 'utilisateur' && !id) {

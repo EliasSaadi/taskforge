@@ -12,18 +12,13 @@ const MonProfil = () => {
   const { isDeleting, deleteCurrentAccount } = useDelete();
 
   const handleDeleteAccount = async () => {
-    console.log('Utilisateur actuel:', user);
-    console.log('ID utilisateur:', user?.id);
-    
     if (!user?.id) {
-      console.error('ID utilisateur manquant');
       return;
     }
     
     const success = await deleteCurrentAccount(user.id);
     
     if (success) {
-      console.log('Compte utilisateur supprimé avec succès');
       setShowDeleteModal(false);
       setIsRedirectingAfterDelete(true);
       

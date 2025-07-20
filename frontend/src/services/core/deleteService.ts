@@ -45,8 +45,6 @@ export class DeleteService {
    */
   static async deleteCurrentUserAccount(idUser: number): Promise<void> {
     try {
-      console.log('Suppression de l\'utilisateur avec ID:', idUser);
-      console.log('URL appelée:', `/user/${idUser}/delete`);
       await api.delete(`api/user/${idUser}/delete`);
     } catch (error) {
       console.error('Erreur lors de la suppression du compte:', error);

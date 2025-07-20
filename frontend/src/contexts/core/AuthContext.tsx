@@ -151,7 +151,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await api.post("/api/logout");
     } catch (err) {
       // Ignorer les erreurs de déconnexion (utilisateur déjà déconnecté, etc.)
-      console.log("Erreur lors de la déconnexion (ignorée):", err);
     } finally {
       setUser(null);
       setError(null);

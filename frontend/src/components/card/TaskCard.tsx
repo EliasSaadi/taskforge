@@ -9,7 +9,10 @@ interface TaskCardProps {
     titre: string;
     description: string;
     statut: 'à faire' | 'en cours' | 'terminé';
-    dateLimite: string;
+    dateLimite?: string;  // Format frontend
+    date_limite?: string; // Format backend
+    dateDebut?: string;   // Format frontend  
+    date_debut?: string;  // Format backend
     assignedUsers: Array<{
       id: number;
       prenom: string;
@@ -61,9 +64,23 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     }
   };
 
+  // Fonction pour obtenir la date limite (gère les deux formats)
+  const getDateLimite = () => {
+    return task.dateLimite || task.date_limite || '';
+  };
+
   // Fonction pour formater la date
   const formatDate = (dateString: string) => {
+    if (!dateString) return 'Date non définie';
+    
     const date = new Date(dateString);
+    
+    // Vérifier si la date est valide
+    if (isNaN(date.getTime())) {
+      console.warn('Date invalide reçue:', dateString);
+      return 'Date invalide';
+    }
+    
     return date.toLocaleDateString('fr-FR', {
       day: '2-digit',
       month: '2-digit',
@@ -87,7 +104,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     }
   };
 
-  const dateStatus = getDateStatus(task.dateLimite);
+  const dateStatus = getDateStatus(getDateLimite());
 
   // Gestion du changement de statut
   const handleStatusChange = (newStatus: 'à faire' | 'en cours' | 'terminé') => {
@@ -159,7 +176,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             <div className="flex items-center gap-2">
                 <Calendar size={16} className={dateStatus.color} />
                 <span className={`tf-text-small ${dateStatus.color}`}>
-                    {formatDate(task.dateLimite)}
+                    {formatDate(getDateLimite())}
                 </span>
             </div>
         </div>
