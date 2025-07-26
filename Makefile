@@ -67,3 +67,23 @@ test:
 # Nettoyer les volumes (⚠️ supprime aussi les données DB)
 clean:
 	docker-compose down -v
+
+
+# Commandes pour lancer les tests pour chaque controller
+test-AppLockedMiddleware:
+	docker-compose exec backend php artisan test tests/Feature/AppLockedMiddlewareTest.php
+
+test-AuthController:
+	docker-compose exec backend php artisan test tests/Feature/AuthControllerTest.php
+
+test-PasswordReset:
+	docker-compose exec backend php artisan test tests/Feature/PasswordResetTest.php
+
+test-ProjectController:
+	docker-compose exec backend php artisan test tests/Feature/ProjectControllerTest.php
+
+test-TaskController:
+	docker-compose exec backend php artisan test tests/Feature/TaskControllerTest.php
+
+test-UserController:
+	docker-compose exec backend php artisan test tests/Feature/UserControllerTest.php

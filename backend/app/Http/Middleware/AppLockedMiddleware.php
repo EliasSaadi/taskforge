@@ -34,7 +34,7 @@ class AppLockedMiddleware
 
         if ($appLocked && $token !== $expectedToken) {
             if ($request->expectsJson() || $request->is('api/*')) {
-                return response()->json(['error' => 'API verrouillée'], 403);
+                return response()->json(['error' => 'API temporairement verrouillée.'], 403);
             }
 
             return redirect($frontendUrl);

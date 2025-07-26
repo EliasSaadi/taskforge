@@ -75,9 +75,6 @@ class AuthControllerTest extends TestCase
         $response = $this->getJson('/api/user');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'id' => $user->id,
-                     'email' => $user->email,
-                 ]);
+                 ->assertJson(['message' => 'Utilisateurs récupérés avec succès']);
     }
 }

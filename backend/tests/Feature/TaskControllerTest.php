@@ -216,6 +216,12 @@ class TaskControllerTest extends TestCase
      */
     public function test_update_modifie_tache()
     {
+        // Créer le rôle Chef de Projet pour ce test
+        $chefRole = Role::create(['nom' => 'Chef de Projet']);
+        
+        // Mettre à jour le rôle de l'utilisateur pour être chef de projet
+        $this->user->projets()->updateExistingPivot($this->project->id, ['role_id' => $chefRole->id]);
+        
         $task = Task::factory()->create(['project_id' => $this->project->id]);
         
         $updateData = [
@@ -259,7 +265,7 @@ class TaskControllerTest extends TestCase
         $response->assertStatus(403)
                  ->assertJson([
                      'success' => false,
-                     'message' => 'Accès non autorisé'
+                     'message' => 'Accès refusé - Seuls le chef de projet et l\'assistant peuvent modifier cette tâche'
                  ]);
     }
 

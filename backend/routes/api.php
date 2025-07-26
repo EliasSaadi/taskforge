@@ -11,6 +11,12 @@ use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
+/* Middleware pour tester si l'API est verrouillée */
+Route::middleware([\App\Http\Middleware\AppLockedMiddleware::class])
+    ->get('/middleware-test', function () {
+        return response()->json(['ok' => true]);
+    });
+
 
 /* Routes d'authentification */
 Route::post('/login', [AuthController::class, 'login']);
