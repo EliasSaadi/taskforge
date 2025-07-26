@@ -71,20 +71,15 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }: {
   const { login, error, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
   async function handleConnectSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
       await login(email, password);
-      setIsRedirecting(true);
+      loading;
       onClose();
       
-      // Petit délai pour afficher le loader avant la redirection
-      setTimeout(() => {
-        navigate("/dashboard");
-        setIsRedirecting(false);
-      }, 1000);
+      navigate("/dashboard");
     } catch {
       // L'erreur est déjà stockée dans le contexte
     }
@@ -97,14 +92,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }: {
   const toggleLoginPassword = () => setShowLoginPassword(!showLoginPassword);
 
   return (
-    <>
-      {/* LoaderSpin en plein écran pendant la redirection */}
-      {isRedirecting && (
-        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center">
-          <LoaderSpin size="xl" />
-        </div>
-      )}
-      
+    <>      
       {/* Modal Connexion */}
       <div
         id="loginModal"

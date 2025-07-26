@@ -41,6 +41,8 @@ const Header = () => {
               aria-label="Barre de recherche"
             />
             <button 
+              data-modal-target="registerModal"
+              data-modal-toggle="registerModal"
               className="bg-tf-dodger px-5 py-3 tf-text-button rounded-lg flex items-center gap-1"
               aria-label="Créer un nouveau projet"
             >
