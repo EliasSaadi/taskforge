@@ -1,14 +1,14 @@
 // src/App.tsx
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { AppGuard } from './components/AppGuard'
-import { PrivateRoute } from './components/PrivateRoute'
-import { PublicRoute } from './components/PublicRoute'
-import { VerrouPage } from './pages/PageVerouillage'
-import { AuthProvider } from './contexts/core/AuthContext';
-import { DeleteProvider } from './contexts/core/DeleteContext';
-import { NotificationProvider } from './contexts/core/NotificationContext';
-import { GlobalProjectProvider } from './contexts/project/GlobalProvider';
-import { NotificationContainer } from './components/ui';
+import { AppGuard } from '@/components/AppGuard'
+import { PrivateRoute } from '@/components/PrivateRoute'
+import { PublicRoute } from '@/components/PublicRoute'
+import { VerrouPage } from '@/pages/PageVerouillage'
+import { AuthProvider } from '@/contexts/core/AuthContext';
+import { DeleteProvider } from '@/contexts/core/DeleteContext';
+import { NotificationProvider } from '@/contexts/core/NotificationContext';
+import { GlobalProjectProvider } from '@/contexts/project/GlobalProvider';
+import { NotificationContainer } from '@/components/ui';
 
 // Importe aussi tes autres pages ici
 import LayoutPublic from "@/components/layouts/LayouPublic";
